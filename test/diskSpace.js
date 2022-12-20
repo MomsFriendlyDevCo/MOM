@@ -2,7 +2,7 @@ import {dirName} from '@momsfriendlydevco/es6';
 import {expect} from 'chai';
 import {Sanity} from '#lib/sanity';
 
-describe('diskSpace', ()=> {
+describe('Module: DiskSpace', ()=> {
 
 	it('should return a SanityModuleResponse', ()=>
 		new Sanity()

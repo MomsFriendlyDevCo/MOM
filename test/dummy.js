@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {Sanity} from '#lib/sanity';
 
-describe('dummy', ()=> {
+describe('Module: Dummy', ()=> {
 
 	it('should return a SanityModuleResponse', function() {
 		this.timeout(30 * 1000);

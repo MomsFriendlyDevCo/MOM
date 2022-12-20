@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {Sanity} from '#lib/sanity';
 
-describe('ping', ()=> {
+describe('Module: Ping', ()=> {
 
 	it('should return a SanityModuleResponse', function() {
 		this.timeout(30 * 1000);
@@ -23,8 +23,6 @@ describe('ping', ()=> {
 
 				expect(res[0]).to.have.property('message');
 				expect(res[0].message).to.be.a('string');
-
-				console.log('RAW SMR', res[0]);
 			})
 	});
 

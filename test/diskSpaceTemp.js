@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {Sanity} from '#lib/sanity';
 
-describe('diskSpaceTemp', ()=> {
+describe('Module: DiskSpaceTemp', ()=> {
 
 	it('should return a SanityModuleResponse', ()=>
 		new Sanity()
