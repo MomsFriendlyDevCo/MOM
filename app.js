@@ -1,7 +1,9 @@
 #!/usr/bin/node
 
-import {Sanity} from '#lib/sanity';
+import camelCase from '#lib/camelCase';
+import {DotEnv} from '@momsfriendlydevco/dotenv';
 import {program} from 'commander';
+import {Sanity} from '#lib/sanity';
 
 let opts = program
 	.name('sanity')
@@ -25,13 +27,51 @@ let opts = program
 		t.push(Object.fromEntries(args));
 		return t;
 	}, [])
+	.option('-v, --verbose', 'Be more verbose')
+	.option('--no-env', 'Disable trying to read in config from .env files')
 	.parse(process.argv)
 	.opts()
 
 let sanity = new Sanity();
+let loadedFromEnv = 0;
+
+// Read .env files {{{
+if (opts.env) {
+	let configKeys = new DotEnv()
+		.parse([
+			'.env.example',
+			'.env',
+		])
+		.value();
+
+	Object.entries(configKeys)
+		.filter(([rawKey, rawVal]) =>
+			/^SANITY_MODULE_([A-Z_]+)$/.test(rawKey)
+			&& /^(true|1|y)/.test(rawVal)
+		)
+		.forEach(([rawKey]) => {
+			let keyUc = rawKey.replace(/^SANITY_MODULE_/, '');
+			let module = camelCase(keyUc);
+
+			let modPrefix = new RegExp(`^SANITY_MODULE_${keyUc}\.`); // eslint-disable-line no-useless-escape
+			let modArgs = Object.fromEntries(
+				Object.entries(configKeys)
+					.filter(([optKey]) => modPrefix.test(optKey))
+					.map(([optKey, optVal]) => [
+						optKey.replace(modPrefix, '').toLowerCase(),
+						/^{.+}$/.test(optVal) ? JSON.parse(optVal) : optVal, // Try to eval JSON like structures
+					])
+			);
+
+			loadedFromEnv++;
+			if (opts.verbose) console.warn('Loading module', module, 'from .env with options', modArgs);
+			sanity.use(module, modArgs);
+		})
+}
+// }}}
 
 // Load all modules
-if (!opts.module.length) opts.module = [ // Defaults if nothing else is given
+if (!loadedFromEnv && !opts.module.length) opts.module = [ // Defaults if nothing else is given
 	// Can only use modules that dont require options
 	{module: 'diskSpaceTemp'},
 	{module: 'ping'},
