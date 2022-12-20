@@ -1,0 +1,56 @@
+{
+  "name": "@momsfriendlydevco/sanity",
+  "version": "1.0.0",
+  "description": "Server sanity checking",
+  "scripts": {
+    "lint": "eslint lib modules",
+    "test": "mocha"
+  },
+  "type": "module",
+  "bin": {
+    "sanity": "./app.js"
+  },
+  "imports": {
+    "#lib/*": "./lib/*.js",
+    "#modules/*": "./modules/*.js"
+  },
+  "exports": {
+    ".": "./lib/sanity.js",
+    "./*": "./lib/*.js"
+  },
+  "main": "lib/sanity.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MomsFriendlyDevCo/Sanity.git"
+  },
+  "author": "Matt Carter <matt@mfdc.biz>",
+  "bugs": {
+    "url": "https://github.com/MomsFriendlyDevCo/Sanity/issues"
+  },
+  "homepage": "https://github.com/MomsFriendlyDevCo/Sanity#readme",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=16.14.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "es6": true,
+      "node": true,
+      "mocha": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 13,
+      "sourceType": "module"
+    }
+  },
+  "dependencies": {
+    "@momsfriendlydevco/es6": "^1.0.0",
+    "@momsfriendlydevco/readable": "^1.2.1",
+    "execa": "^6.1.0"
+  }
+}
