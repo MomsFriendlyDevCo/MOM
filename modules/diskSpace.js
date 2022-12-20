@@ -31,7 +31,7 @@ export function run(options) {
 	if (!settings.pathAlias) settings.pathAlias = settings.path;
 
 	return Promise.resolve()
-		.then(()=> execa('df', settings.path))
+		.then(()=> execa('df', [settings.path]))
 		.then(({stdout}) => stdout.split('\n').slice(1).at(0)) // Remove first line (headers)
 		.then(line => line.split(/\s+/)) // Split first line by whitespace
 		.then(line => {
@@ -54,9 +54,9 @@ export function run(options) {
 			return {
 				status,
 				message:
-					status == 'ok'
-					? `${readable.fileSize(data.used)} / ${readable.fileSize(data.size)} @ ${data.freePercent}% free for ${settings.mountAlias || data.mount} mount point`
-					: `Only ${data.freePercent}% disk remaining - ${readable.fileSize(data.used)} / ${readable.fileSize(data.size)} @ ${data.usePercent}% used for ${settings.mountAlias || data.mount} mount point`,
+					status == 'OK'
+					? `${readable.fileSize(data.used) || '0b'} / ${readable.fileSize(data.size)} @ ${data.freePercent}% free for ${settings.mountAlias || data.mount} mount point`
+					: `Only ${readable.fileSize(data.avail) || '0b'} ~ ${data.freePercent}% disk remaining - ${readable.fileSize(data.used)} / ${readable.fileSize(data.size)} @ ${data.usePercent}% used for ${settings.mountAlias || data.mount} mount point`,
 			};
 		});
 }
