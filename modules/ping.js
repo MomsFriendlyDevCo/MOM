@@ -8,6 +8,7 @@ import ping from 'ping';
 * @param {Number} [options.repeat=3] Number of pings to send
 * @param {Number} [options.warnTimeout=100] Timeout in milliseconds after which WARN will occur
 * @param {Number} [options.critTimeout=500] Timeout in milliseconds after which CRIT will occur
+* @returns {SanityModuleResponse}
 */
 export function run(options) {
 	let settings = {
