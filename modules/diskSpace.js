@@ -14,6 +14,9 @@ export function init() {
 * Check the diskspace at a given path
 * @param {Object} options The options to mutate behaviour
 * @param {String} options.path The path to check the diskspace for
+* @param {String} [options.mountAlias] Override string when displaying the mount path
+* @param {Number} [options.warnPercent=20] Percentage under which the status should WARN
+* @param {Number} [options.critPercent=10] Percentage under which the status should CRIT
 * @returns {SanityModuleResponse}
 */
 export function run(options) {
