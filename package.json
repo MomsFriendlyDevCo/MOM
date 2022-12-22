@@ -53,9 +53,12 @@
     }
   },
   "dependencies": {
-    "@momsfriendlydevco/dotenv": "^1.1.1",
-    "@momsfriendlydevco/es6": "^1.0.0",
+    "@honeycombio/opentelemetry-node": "^0.3.0",
+    "@momsfriendlydevco/dotenv": "^1.1.2",
+    "@momsfriendlydevco/es6": "^1.1.0",
     "@momsfriendlydevco/readable": "^1.2.1",
+    "@opentelemetry/auto-instrumentations-node": "^0.35.0",
+    "@opentelemetry/sdk-metrics": "^1.8.0",
     "chalk": "^5.2.0",
     "commander": "^9.4.1",
     "debug": "^4.3.4",
