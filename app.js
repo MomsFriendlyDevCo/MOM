@@ -70,7 +70,7 @@ if (opts.env) {
 }
 // }}}
 
-// Load all modules
+// Load all modules {{{
 if (!loadedFromEnv && !opts.module.length) opts.module = [ // Defaults if nothing else is given
 	// Can only use modules that dont require options
 	{module: 'diskSpaceTemp'},
@@ -79,11 +79,14 @@ if (!loadedFromEnv && !opts.module.length) opts.module = [ // Defaults if nothin
 opts.module.forEach(({module, args}) =>
 	sanity.use(module, args)
 );
+// }}}
 
-// Load all reporters
+// Load all reporters {{{
 if (!opts.reporter.length) opts.reporter = [{reporter: 'text'}]; // Default to 'text' if nothing else is given
 opts.reporter.forEach(({reporter, args}) =>
 	sanity.reporter(reporter, args)
 );
+// }}}
 
-sanity.runAll();
+sanity.runAll()
+	.then(({text}) => console.log(text))
