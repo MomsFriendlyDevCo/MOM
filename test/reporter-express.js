@@ -10,7 +10,6 @@ describe('Reporter: Express', ()=> {
 	let sanity;
 	before('setup Sanity instance', ()=> {
 		sanity = new Sanity()
-			// .use('diskSpace')
 			.use('diskSpaceTemp')
 			.use('ping')
 	});
