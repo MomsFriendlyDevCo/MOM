@@ -25,5 +25,14 @@ export function run(options) {
 				: results.length < settings.warnNumber ? 'WARN'
 				: 'OK',
 			message: `Found ${results.length} matches`,
+			description: Array.isArray(settings.glob)
+				? 'File count with globs ' + settings.glob.map(g => `"${g}"`).join(', ')
+				: `File count with glob "${settings.glob}"`,
+			metric: {
+				type: 'numeric',
+				value: results.length,
+				warnValue: `<${settings.warnNumber}`,
+				critValue: `<${settings.critNumber}`,
+			},
 		}))
 }

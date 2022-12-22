@@ -11,12 +11,21 @@ export function run(options) {
 		status: options.status || 'OK',
 		message: options.message || 'Test message',
 		times: 1,
+		metric: {
+			type: 'numeric',
+			unit: 'number',
+			value: Math.round(Math.random * 1000),
+			warnValue: '>=800',
+			critValue: '>=900',
+			descrition: 'Fake numeric metric',
+		},
 		...options,
 	};
 
 	let makeItem = ()=> ({
 		status: settings.status,
 		message: settings.message,
+		metric: settings.metric,
 	});
 
 	// Single items

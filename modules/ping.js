@@ -36,7 +36,16 @@ export function run(options) {
 				status,
 				message: res.alive
 					? `Ping average to ${settings.hostAlias || settings.host} AVG=${res.avg} (MIN=${res.min} / MAX=${res.max})`
-					: `Server ${settings.hostAlias} is down or non-responsive`
+					: `Server ${settings.hostAlias} is down or non-responsive`,
+				description: 'Measure average Ping from the server',
+				metric: {
+					type: 'numeric',
+					unit: 'timeMs',
+					value: res.avg,
+					critValue: `>${settings.critTimeout}`,
+					warnValue: `>${settings.warnTimeout}`,
+					description: `Average ping time to ${settings.host}`,
+				},
 			};
 		});
 }

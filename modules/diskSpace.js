@@ -57,6 +57,14 @@ export function run(options) {
 					status == 'OK'
 					? `${readable.fileSize(data.used) || '0b'} / ${readable.fileSize(data.size)} @ ${data.freePercent}% free for ${settings.mountAlias || data.mount} mount point`
 					: `Only ${readable.fileSize(data.avail) || '0b'} ~ ${data.freePercent}% disk remaining - ${readable.fileSize(data.used)} / ${readable.fileSize(data.size)} @ ${data.usePercent}% used for ${settings.mountAlias || data.mount} mount point`,
+				description: `Disk usage at ${settings.mountAlias || data.mount}`,
+				metric: {
+					type: 'numeric',
+					unit: 'bytes',
+					value: data.used,
+					warnValue: '>=' + (settings.warnPercent / 100) * data.size,
+					critValue: '>=' + (settings.critPercent / 100) * data.size,
+				},
 			};
 		});
 }

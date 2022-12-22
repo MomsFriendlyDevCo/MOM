@@ -60,6 +60,13 @@ export function run(options) {
 					id: collection,
 					status: docCount < colSettings.minCount ? 'CRIT' : 'OK',
 					message: `Found ${docCount} documents`,
+					description: `Documents in db.${collection}`,
+					metric: {
+						type: 'numeric',
+						value: docCount,
+						critValue: `>=${colOptions.minCount}`,
+						description: `Check db.${collection}.count() >= ${colSettings.minCount}`,
+					},
 				}))
 		})
 	)
