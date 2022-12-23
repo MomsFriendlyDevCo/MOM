@@ -7,7 +7,7 @@ export function run(responses, options) {
 		formatStatus: status =>
 			status == 'OK' ? chalk.green(status)
 			: status.includes(['FAIL', 'WARN']) ? chalk.yellow.bold(status)
-			: chalk.bold.red(status),
+			: chalk.bold.bold.red(status),
 		...options,
 	};
 
@@ -34,7 +34,7 @@ export function run(responses, options) {
 				'',
 			] : []
 		),
-		...success.map(m => `${m.status}: ${m.message}`),
+		...success.map(m => `${settings.formatStatus(m.status)}: ${m.message}`),
 		success.length > 0 ? '' : false,
 		fails.length == 0 && success.length > 1 ? `All ${success.length} tests passing`
 			: fails.length > 0 && success.length > 0 ? `${fails.length} tests failing, ${success.length} succeeding out of ${responses.length} ~ ${Math.round((success.length / responses.length) * 100)}`
