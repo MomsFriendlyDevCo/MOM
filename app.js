@@ -11,11 +11,13 @@ let opts = program
 	.option('-m, --module <mod=opt1:val1,opt2:val2>', 'Enable a module and set options (can specify multiple times)', (v, t) => {
 		let {module, args} = /^(?<module>.+?)(?:=(?<args>.+))?$/.exec(v).groups || {};
 		if (!module) throw new Error('Unknown module');
-		args = args
-			.split(/\s*,\s*/)
-			.map(arg => arg.split(/\s*[=:]\s*/, 2))
+		args = args?.length > 0
+			? args
+				.split(/\s*,\s*/)
+				.map(arg => arg.split(/\s*[=:]\s*/, 2))
+			: [];
 
-		t.push(Object.fromEntries(args));
+		t.push({module, args: Object.fromEntries(args)});
 		return t;
 	}, [])
 	.option('-r, --reporter <rep=opt1:val1,opt2:val2>', 'Enable a reporter and set options (can specify multiple times)', (v, t) => {
