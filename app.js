@@ -1,5 +1,6 @@
 #!/usr/bin/node
 
+import chalk from 'chalk';
 import camelCase from '#lib/camelCase';
 import {DotEnv} from '@momsfriendlydevco/dotenv';
 import {program} from 'commander';
@@ -20,15 +21,18 @@ let opts = program
 	.option('-r, --reporter <rep=opt1:val1,opt2:val2>', 'Enable a reporter and set options (can specify multiple times)', (v, t) => {
 		let {reporter, args} = /^(?<reporter>.+?)(?:=(?<args>.+))?$/.exec(v).groups || {};
 		if (!reporter) throw new Error('Unknown reporter');
-		args = args
-			.split(/\s*,\s*/)
-			.map(arg => arg.split(/\s*[=:]\s*/, 2))
+		args = args?.length > 0
+			? args
+				.split(/\s*,\s*/)
+				.map(arg => arg.split(/\s*[=:]\s*/, 2))
+			: [];
 
-		t.push(Object.fromEntries(args));
+		t.push({reporter, args: Object.fromEntries(args)});
 		return t;
 	}, [])
 	.option('-v, --verbose', 'Be more verbose')
 	.option('--no-env', 'Disable trying to read in config from .env files')
+	.option('--no-headers', 'Disable header seperators if multiple reporters return content')
 	.parse(process.argv)
 	.opts()
 
@@ -89,4 +93,16 @@ opts.reporter.forEach(({reporter, args}) =>
 // }}}
 
 sanity.runAll()
-	.then(({text}) => console.log(text))
+	.then((responses) => {
+		if (Object.keys(responses).length == 0) {
+			throw new Error('No response output from any selected reporter');
+		} else if (Object.keys(responses).length == 1) {
+			console.log(responses[Object.keys(responses).at(0)])
+		} else {
+			Object.entries(responses).forEach(([key, text]) => {
+				if (opts.headers) console.log(chalk.bold.bgBlue.black(` --- ${key} --- `));
+				console.log(text);
+				if (!text.endsWith('\n')) console.log(''); // Add newline if one isn't already present
+			})
+		}
+	})
