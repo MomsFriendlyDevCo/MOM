@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-export function run(responses, options) {
+export function run({responses}, options) {
 	let settings = {
 		header: ()=> [],
 		footer: ()=> [],
