@@ -5,11 +5,12 @@ import camelCase from '#lib/camelCase';
 import {DotEnv} from '@momsfriendlydevco/dotenv';
 import {program} from 'commander';
 import {Sanity} from '#lib/sanity';
+import timestring from 'timestring';
 
 let opts = program
 	.name('sanity')
 	.option('-j, --json', 'Shorthand for `-r json`')
-	.option('-m, --module <mod=opt1:val1,opt2:val2>', 'Enable a module and set options (can specify multiple times)', (v, t) => {
+	.option('-m, --module <mod=opt1:val1,opt2:val2>', 'Enable a module and set options (can specify multiple times)', (v, t) => { // {{{
 		let {module, args} = /^(?<module>.+?)(?:=(?<args>.+))?$/.exec(v).groups || {};
 		if (!module) throw new Error('Unknown module');
 		args = args?.length > 0
@@ -20,8 +21,8 @@ let opts = program
 
 		t.push({module, args: Object.fromEntries(args)});
 		return t;
-	}, [])
-	.option('-r, --reporter <rep=opt1:val1,opt2:val2>', 'Enable a reporter and set options (can specify multiple times)', (v, t) => {
+	}, []) // }}}
+	.option('-r, --reporter <rep=opt1:val1,opt2:val2>', 'Enable a reporter and set options (can specify multiple times)', (v, t) => { // {{{
 		let {reporter, args} = /^(?<reporter>.+?)(?:=(?<args>.+))?$/.exec(v).groups || {};
 		if (!reporter) throw new Error('Unknown reporter');
 		args = args?.length > 0
@@ -32,7 +33,9 @@ let opts = program
 
 		t.push({reporter, args: Object.fromEntries(args)});
 		return t;
-	}, [])
+	}, []) // }}}
+	.option('-l, --loop [times]', 'Repeat output the specifed number of times. Use "0" for forever', 1)
+	.option('-p, --loop-pause [timestring]', 'Wait for a timestring-compatible delay between each loop. Use "0" to disable', '10s')
 	.option('-v, --verbose', 'Be more verbose')
 	.option('--no-env', 'Disable trying to read in config from .env files')
 	.option('--no-headers', 'Disable header seperators if multiple reporters return content')
@@ -96,8 +99,19 @@ opts.reporter.forEach(({reporter, args}) =>
 );
 // }}}
 
-sanity.runAll()
+console.log('OPTS', opts);
+
+let runCount = 0;
+let loopPause = opts.loopPause == 0 ? 0 : timestring(opts.loopPause, 'ms');
+let runner = ()=> Promise.resolve()
+	.then(()=> opts.loop != 1 && console.log(chalk.bold.bgMagenta(
+		`Run #${runCount+1}`
+		+ (opts.loop > 0 ? `/${opts.loop}` : '')
+		+ ` (${new Date().toISOString()})`
+	)))
+	.then(()=> sanity.runAll())
 	.then((responses) => {
+		runCount++;
 		if (Object.keys(responses).length == 0) {
 			throw new Error('No response output from any selected reporter');
 		} else if (Object.keys(responses).length == 1) {
@@ -110,3 +124,8 @@ sanity.runAll()
 			})
 		}
 	})
+	.finally(()=> {
+		if (opts.loop == 0 || runCount < opts.loop) setTimeout(runner, loopPause); // Queue up next run if we can loop more
+	})
+
+runner(); // Kick off initial run loop
