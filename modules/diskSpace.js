@@ -59,6 +59,7 @@ export function run(options) {
 					: `Only ${readable.fileSize(data.avail) || '0b'} ~ ${data.freePercent}% disk remaining - ${readable.fileSize(data.used)} / ${readable.fileSize(data.size)} @ ${data.usePercent}% used for ${settings.mountAlias || data.mount} mount point`,
 				description: `Disk usage at ${settings.mountAlias || data.mount}`,
 				metric: {
+					id: 'spaceAvailable',
 					type: 'numeric',
 					unit: 'bytes',
 					value: data.used,

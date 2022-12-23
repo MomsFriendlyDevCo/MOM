@@ -29,6 +29,7 @@ export function run(options) {
 				? 'File count with globs ' + settings.glob.map(g => `"${g}"`).join(', ')
 				: `File count with glob "${settings.glob}"`,
 			metric: {
+				id: 'fileCount',
 				type: 'numeric',
 				value: results.length,
 				warnValue: `<${settings.warnNumber}`,

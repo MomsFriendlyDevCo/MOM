@@ -62,6 +62,7 @@ export function run(options) {
 					message: `Found ${docCount} documents`,
 					description: `Documents in db.${collection}`,
 					metric: {
+						id: `${collection}.count`,
 						type: 'numeric',
 						value: docCount,
 						critValue: `>=${colOptions.minCount}`,

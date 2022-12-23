@@ -12,6 +12,7 @@ export function run(options) {
 		message: options.message || 'Test message',
 		times: 1,
 		metric: {
+			id: 'dummyData',
 			type: 'numeric',
 			unit: 'number',
 			value: Math.round(Math.random * 1000),

@@ -39,6 +39,7 @@ export function run(options) {
 					: `Server ${settings.hostAlias} is down or non-responsive`,
 				description: 'Measure average Ping from the server',
 				metric: {
+					id: 'avgResponseTime',
 					type: 'numeric',
 					unit: 'timeMs',
 					value: res.avg,
