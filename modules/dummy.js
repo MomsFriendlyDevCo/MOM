@@ -6,7 +6,7 @@
 * @param {Number} [options.times=1] How many responses to return to simulate a combined Sanity response
 * @returns {SanityModuleResponse}
 */
-export function run(options) {
+export function run({options}) {
 	let settings = {
 		status: options.status || 'OK',
 		message: options.message || 'Test message',

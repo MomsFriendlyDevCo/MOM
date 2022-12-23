@@ -7,7 +7,7 @@ import jsonColorizer from 'json-colorizer';
 * @param {String|Number} [options.indent=2] Indent setting for standard JSON output
 * @param {String} [options.mode='prettyAuto'] How to output. ENUM: 'prettyAuto' (pretty only if STDOUT is a TTY), 'pretty' (force pretty mode), 'raw' (basic JSON output), 'object' JavaScript POJO
 */
-export function run({responses}, options) {
+export function run({responses, options}) {
 	let settings = {
 		indent: 2,
 		mode: 'prettyAuto',

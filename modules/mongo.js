@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 * @param {String} [options.uri] The Mongoose URI to use, must specify this or `connection`
 * @param {String} [options.connection] The Mongoose connector to use, must specify this or `uri`
 */
-export function init(options) {
+export function init({options}) {
 	let settings = {
 		connection: null,
 		uri: null,
@@ -35,7 +35,7 @@ export function init(options) {
 * @param {Number} [options.models.minCount=1] Minimum document count to accept
 * @returns {SanityModuleResponse}
 */
-export function run(options) {
+export function run({options}) {
 	let settings = {
 		connection: null,
 		models: {},

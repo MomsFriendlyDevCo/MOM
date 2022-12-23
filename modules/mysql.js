@@ -7,7 +7,7 @@ import {URL} from 'node:url';
 * @param {String} [options.uri] The MySQL URI to use, must specify this or `connection`
 * @param {String} [options.connection] The MySQL+KNEX connector to use
 */
-export function init(options) {
+export function init({options}) {
 	let settings = {
 		connection: null,
 		uri: null,
@@ -42,7 +42,7 @@ export function init(options) {
 * @param {Number} [options.tables.minCount=1] Minimum row count to accept
 * @returns {SanityModuleResponse}
 */
-export function run(options) {
+export function run({options}) {
 	let settings = {
 		connection: null,
 		tables: null,

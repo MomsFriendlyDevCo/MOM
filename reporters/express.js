@@ -1,6 +1,6 @@
 import {run as textReporter} from '#reporters/text';
 
-export function init(options) {
+export function init({options}) {
 	let settings = {
 		app: null,
 		path: '/api/sanity',
@@ -23,7 +23,9 @@ export function init(options) {
 		].filter(Boolean),
 		(req, res) => Promise.resolve()
 			.then(()=> textReporter.call(this, {
-				formatStatus: v => v, // Disable fancy output
+				options: {
+					formatStatus: v => v, // Disable fancy output
+				},
 			}))
 			.then(text => res.send(text))
 			.catch(e => res.status(400).send('ERROR: CORE: ' + e.toString()))

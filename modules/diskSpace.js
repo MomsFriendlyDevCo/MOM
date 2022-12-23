@@ -4,7 +4,8 @@ import {platform as osPlatform} from 'node:os';
 
 let platform = osPlatform();
 
-export function init() {
+export function isAvailable() {
+	throw new Error('NOPE!');
 	if (!['darwin', 'freebsd', 'linux', 'openbsd', 'sunos'].includes(platform))
 		throw new Error('Cannot check diskspace on non Unix compatible systems');
 }
@@ -19,7 +20,8 @@ export function init() {
 * @param {Number} [options.critPercent=10] Percentage under which the status should CRIT
 * @returns {SanityModuleResponse}
 */
-export function run(options) {
+export function run({options}) {
+	console.log('USE OPTIONS', options);
 	let settings = {
 		path: null,
 		mountAlias: null,

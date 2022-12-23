@@ -8,7 +8,7 @@ import {globby} from 'globby';
 * @param {Number} [options.critNumber=1] Number of matches to trigger a CRIT status
 * @returns {SanityModuleResponse}
 */
-export function run(options) {
+export function run({options}) {
 	let settings = {
 		glob: null,
 		warnNumber: 1,

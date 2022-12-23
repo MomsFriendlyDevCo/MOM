@@ -1,9 +1,9 @@
-import {run as DSRun, init as DSInit} from '#modules/diskSpace';
+import {run as DSRun, isAvailable as DSIsAvailable} from '#modules/diskSpace';
 import {tmpdir} from 'node:os';
 
-export function init(options) {
+export function isAvailable({options, injector}) {
 	options.path = tmpdir(); // Mutate path to tmpDir
-	return DSInit(options);
+	return DSIsAvailable.call(injector, injector);
 }
 
 export let run = DSRun;
