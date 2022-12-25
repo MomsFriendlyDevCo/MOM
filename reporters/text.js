@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-export function run({responses}, options) {
+export function run({options, responses}) {
 	let settings = {
 		header: ()=> [],
 		footer: ()=> [],
@@ -8,6 +8,7 @@ export function run({responses}, options) {
 			status == 'OK' ? chalk.green(status)
 			: status.includes(['FAIL', 'WARN']) ? chalk.yellow.bold(status)
 			: chalk.bold.bold.red(status),
+		formatModule: mod => chalk.white.bgWhite.black(mod),
 		...options,
 	};
 
@@ -23,10 +24,10 @@ export function run({responses}, options) {
 	return [
 		fails.length > 0
 			? chalk.bgRed.black('SANITY:FAIL')
-			: chalk.bgGreeen.white('SANITY:OK'),
+			: chalk.bgGreen.black('SANITY:OK'),
 		...settings.header(),
 		'',
-		...fails.map(m => `${settings.formatStatus(m.status)}: ${m.message}`),
+		...fails.map(m => `${settings.formatStatus(m.status)}: ${settings.formatModule(m.id)}: ${m.message}`),
 		...(fails.length > 0 && success.length > 0 // Do we have BOTH fails + successes? If so apply a padding bar
 			? [
 				'',
@@ -34,7 +35,7 @@ export function run({responses}, options) {
 				'',
 			] : []
 		),
-		...success.map(m => `${settings.formatStatus(m.status)}: ${m.message}`),
+		...success.map(m => `${settings.formatStatus(m.status)}: ${settings.formatModule(m.id)}: ${m.message}`),
 		success.length > 0 ? '' : false,
 		fails.length == 0 && success.length > 1 ? `All ${success.length} tests passing`
 			: fails.length > 0 && success.length > 0 ? `${fails.length} tests failing, ${success.length} succeeding out of ${responses.length} ~ ${Math.round((success.length / responses.length) * 100)}`
