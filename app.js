@@ -1,7 +1,6 @@
 #!/usr/bin/node
 
 import chalk from 'chalk';
-import camelCase from '#lib/camelCase';
 import {DotEnv} from '@momsfriendlydevco/dotenv';
 import {program} from 'commander';
 import {Sanity} from '#lib/sanity';
@@ -43,39 +42,30 @@ let opts = program
 	.opts()
 
 let sanity = new Sanity();
-let loadedFromEnv = 0;
+let loadedFromEnv = false;
 
 // Read .env files {{{
 if (opts.env) {
-	let configKeys = new DotEnv()
+	let config = new DotEnv()
 		.parse([
 			'.env.example',
 			'.env',
 		])
+		.schemaGlob(/\.ENABLED$/, Boolean) // Type cast all *_ENABLE values
+		.filterAndTrim(/^SANITY_MODULE_/)
+		.toTree(/\./)
+		.deep()
+		.camelCase()
 		.value();
 
-	Object.entries(configKeys)
-		.filter(([rawKey, rawVal]) =>
-			/^SANITY_MODULE_([A-Z_]+)$/.test(rawKey)
-			&& /^(true|1|y)/.test(rawVal)
-		)
-		.forEach(([rawKey]) => {
-			let keyUc = rawKey.replace(/^SANITY_MODULE_/, '');
-			let module = camelCase(keyUc);
+	if (opts.verbose) console.warn('Load module config', config);
+	if (Object.keys(config)) loadedFromEnv = true;
 
-			let modPrefix = new RegExp(`^SANITY_MODULE_${keyUc}\.`); // eslint-disable-line no-useless-escape
-			let modArgs = Object.fromEntries(
-				Object.entries(configKeys)
-					.filter(([optKey]) => modPrefix.test(optKey))
-					.map(([optKey, optVal]) => [
-						optKey.replace(modPrefix, '').toLowerCase(),
-						/^{.+}$/.test(optVal) ? JSON.parse(optVal) : optVal, // Try to eval JSON like structures
-					])
-			);
-
-			loadedFromEnv++;
-			if (opts.verbose) console.warn('Loading module', module, 'from .env with options', modArgs);
-			sanity.use(module, modArgs);
+	Object.entries(config)
+		.filter(([module, config]) => module && config.enabled)
+		.forEach(([module, config]) => {
+			if (!opts.verbose) console.warn('Load module', module, config);
+			sanity.use(module, config)
 		})
 }
 // }}}
@@ -98,8 +88,6 @@ opts.reporter.forEach(({reporter, args}) =>
 	sanity.reporter(reporter, args)
 );
 // }}}
-
-console.log('OPTS', opts);
 
 let runCount = 0;
 let loopPause = opts.loopPause == 0 ? 0 : timestring(opts.loopPause, 'ms');
