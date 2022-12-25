@@ -1,6 +1,6 @@
 import {getNodeAutoInstrumentations} from '@opentelemetry/auto-instrumentations-node';
 import {HoneycombSDK} from '@honeycombio/opentelemetry-node';
-import {metrics} from '@opentelemetry/api';
+import {metrics as OTMetrics} from '@opentelemetry/api';
 
 
 /**
@@ -12,19 +12,22 @@ import {metrics} from '@opentelemetry/api';
 * @param {Boolean} [options.installStandard=false] Also install standard background Node instrumentations
 * @param {Boolean} [options.dataSet='example-dataset'] The name of the Metrics data set to export to
 */
-export function init(options) {
+export function init({options}) {
 	let settings = {
 		connection: null,
 		apiKey: null,
 		serviceName: null,
 		installStandard: true,
 		dataSet: 'example-dataset',
+		meter: 'example-meter',
+		attributes: {},
 		...options,
 	};
 
 	if (!settings.connection && !settings.apiKey) {
 		throw new Error('Must specify `connection` or `apiKey` key');
 	} else if (!settings.connection) { // Use apiKey + serviceName to establish connection
+		options.metrics = {}; // Create storage for metric handles (during run)
 		options.connection = new HoneycombSDK({
 			apiKey: settings.apiKey,
 			serviceName: settings.serviceName,
@@ -43,36 +46,50 @@ export function init(options) {
 /**
 * Push stats to Prometheus
 */
-export function run(responses, options) {
-	let meter = metrics.getMeter('example-exporter-collector');
+export function run({metrics, sanity, options}) {
+	let settings = {
+		connection: null,
+		apiKey: null,
+		serviceName: null,
+		installStandard: true,
+		dataSet: 'example-dataset',
+		meter: 'example-meter',
+		attributes: {},
+		dryRun: true,
+		...options,
+	};
+	let meter = OTMetrics.getMeter(settings.meter);
 
-	const requestCounter = meter.createCounter('requests', {
-		description: 'Example of a Counter',
-	});
+	return Promise.all(metrics
+		.filter(metric => metric.value !== undefined) // Only care about metrics with values
+		.map(metric => {
+			// Initalize metric if its not already loaded somewhere {{{
+			if (!options.metrics[metric.id]) {
+				switch (metric.type) {
+					case 'numeric':
+						sanity.debug(`Initalizing OpenTelemetry counter for METRIC:${metric.id}`);
+						options.metrics[metric.id] = meter.createCounter(metric.id, {
+							description: metric.description,
+						});
+						break;
+					default:
+						throw new Error(`Unsupported metric type "${metric.type}"`);
+				}
+			}
+			// }}}
 
-	const upDownCounter = meter.createUpDownCounter('test_up_down_counter', {
-		description: 'Example of a UpDownCounter',
-	});
+			// Record metric {{{
+			if (settings.dryRun) {
+				console.log(`Would record METRIC:${metric.id}`, '=', metric.value);
+			} else {
+				return options.metrics[metric.id].add(metric.value, settings.attributes);
+			}
+			// }}}
+		})
+	);
+}
 
-	const attributes = { environment: 'staging' };
 
-	let intervalHandle = setInterval(() => {
-		console.log('TICK!');
-		requestCounter.add(1, attributes);
-
-		let counterVal = Math.random() > 0.5 ? 1 : -1;
-		console.log('Give counter val', counterVal);
-		upDownCounter.add(counterVal, attributes);
-
-		console.log('DONE TICK');
-	}, 1000);
-
-	return new Promise(resolve => {setTimeout(() => {
-		console.log('DO QUIT');
-		clearInterval(intervalHandle);
-		console.log('FLUSHING');
-		options.connection.shutdown()
-			.then(()=> console.log('DONE FLUSH'))
-			.then(()=> resolve())
-	}, 120 * 1000) });
+export function shutdown(options) {
+	if (options.connection) return options.connection.shutdown()
 }
