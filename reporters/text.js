@@ -23,8 +23,8 @@ export function run({options, responses}) {
 
 	return [
 		fails.length > 0
-			? chalk.bgRed.black('SANITY:FAIL')
-			: chalk.bgGreen.black('SANITY:OK'),
+			? chalk.bgRed.bold.white('SANITY:FAIL')
+			: chalk.bgGreen.bold.black('SANITY:OK'),
 		...settings.header(),
 		'',
 		...fails.map(m => `${settings.formatStatus(m.status)}: ${settings.formatModule(m.id)}: ${m.message}`),
@@ -38,7 +38,7 @@ export function run({options, responses}) {
 		...success.map(m => `${settings.formatStatus(m.status)}: ${settings.formatModule(m.id)}: ${m.message}`),
 		success.length > 0 ? '' : false,
 		fails.length == 0 && success.length > 1 ? `All ${success.length} tests passing`
-			: fails.length > 0 && success.length > 0 ? `${fails.length} tests failing, ${success.length} succeeding out of ${responses.length} ~ ${Math.round((success.length / responses.length) * 100)}`
+			: fails.length > 0 && success.length > 0 ? `${fails.length} tests failing, ${success.length} succeeding out of ${responses.length} ~ ${Math.round((success.length / responses.length) * 100)}%`
 			: fails.length > 1 ? `All ${fails.length} tests failing`
 			: false,
 		...settings.footer(),
