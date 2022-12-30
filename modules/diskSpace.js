@@ -7,7 +7,7 @@ let platform = osPlatform();
 export function config({Schema}) {
 	return new Schema({
 		path: {type: String, required: true},
-		mountAlias: {type: String, required: false},
+		mountAlias: {type: String, default: ''},
 		warnPercent: {type: Number, default: 20},
 		critPercent: {type: Number, default: 10},
 	});
