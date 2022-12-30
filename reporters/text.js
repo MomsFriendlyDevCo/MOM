@@ -6,7 +6,7 @@ export function config({Schema}) {
 		styleSummaryFail: {type: 'style', default: 'bold fgWhite bgRed'},
 		styleModule: {type: 'style', default: 'fgBlack bgWhite'},
 		styleStatusOk: {type: 'style', default: 'fgBlack bgGreen'},
-		styleStatusWarn: {type: 'style', default: 'fgWhite bgYellow'},
+		styleStatusWarn: {type: 'style', default: 'fgBlack bgYellow'},
 		styleStatusRed: {type: 'style', default: 'bold fgWhite bgRed'},
 		styleStatusError: {type: 'style', default: 'bold fgWhite bgRed'},
 	});
