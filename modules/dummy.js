@@ -1,3 +1,12 @@
+export function config({Schema}) {
+	return new Schema({
+		status: {type: String, default: 'OK', enum: ['OK', 'WARN', 'CRIT', 'ERROR']},
+		message: {type: String, default: 'Test message'},
+		times: {type: Number, default: 1},
+	});
+}
+
+
 /**
 * Dummy test which returns the status / response requested
 * @param {Object} options The options to mutate behaviour
@@ -8,25 +17,12 @@
 */
 export function run({options}) {
 	let settings = {
-		status: options.status || 'OK',
-		message: options.message || 'Test message',
-		times: 1,
-		metric: {
-			id: 'dummyData',
-			type: 'numeric',
-			unit: 'number',
-			value: Math.round(Math.random * 1000),
-			warnValue: '>=800',
-			critValue: '>=900',
-			descrition: 'Fake numeric metric',
-		},
 		...options,
 	};
 
 	let makeItem = ()=> ({
 		status: settings.status,
 		message: settings.message,
-		metric: settings.metric,
 	});
 
 	// Single items

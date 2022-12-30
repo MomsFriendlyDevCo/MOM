@@ -1,16 +1,23 @@
-import chalk from 'chalk';
+export function config({Schema}) {
+	return new Schema({
+		header: {type: 'string', default: ''},
+		footer: {type: 'string', default: ''},
+		styleSummaryOk: {type: 'style', default: 'bold fgBlack bgGreen'},
+		styleSummaryFail: {type: 'style', default: 'bold fgWhite bgRed'},
+		styleModule: {type: 'style', default: 'fgBlack bgWhite'},
+		styleStatusOk: {type: 'style', default: 'fgBlack bgGreen'},
+		styleStatusWarn: {type: 'style', default: 'fgWhite bgYellow'},
+		styleStatusRed: {type: 'style', default: 'bold fgWhite bgRed'},
+		styleStatusError: {type: 'style', default: 'bold fgWhite bgRed'},
+	});
+}
 
 export function run({options, responses}) {
-	let settings = {
-		header: ()=> [],
-		footer: ()=> [],
-		formatStatus: status =>
-			status == 'OK' ? chalk.green(status)
-			: status.includes(['FAIL', 'WARN']) ? chalk.yellow.bold(status)
-			: chalk.bold.bold.red(status),
-		formatModule: mod => chalk.white.bgWhite.black(mod),
-		...options,
-	};
+	let formatStatus = status =>
+		status == 'OK' ? options.styleStatusOk(status)
+		: status == 'WARN' ? options.styleStatusWarn(status)
+		: status == 'FAIL' ? options.styleStatusFail(status)
+		: options.styleStatusError(status)
 
 	let {fails, success} = responses.reduce((t, v) => {
 		if (['CRIT', 'ERROR'].includes(v.status)) {
@@ -23,11 +30,11 @@ export function run({options, responses}) {
 
 	return [
 		fails.length > 0
-			? chalk.bgRed.bold.white('SANITY:FAIL')
-			: chalk.bgGreen.bold.black('SANITY:OK'),
-		...settings.header(),
+			? options.styleSummaryFail('SANITY:FAIL')
+			: options.styleSummaryOk('SANITY:OK'),
+		...options.header,
 		'',
-		...fails.map(m => `${settings.formatStatus(m.status)}: ${settings.formatModule(m.id)}: ${m.message}`),
+		...fails.map(m => `${formatStatus(m.status)}: ${options.styleModule(m.id)}: ${m.message}`),
 		...(fails.length > 0 && success.length > 0 // Do we have BOTH fails + successes? If so apply a padding bar
 			? [
 				'',
@@ -35,14 +42,14 @@ export function run({options, responses}) {
 				'',
 			] : []
 		),
-		...success.map(m => `${settings.formatStatus(m.status)}: ${settings.formatModule(m.id)}: ${m.message}`),
+		...success.map(m => `${formatStatus(m.status)}: ${options.styleModule(m.id)}: ${m.message}`),
 		success.length > 0 ? '' : false,
 		fails.length == 0 && success.length > 1 ? `All ${success.length} tests passing`
 			: fails.length > 0 && success.length > 0 ? `${fails.length} tests failing, ${success.length} succeeding out of ${responses.length} ~ ${Math.round((success.length / responses.length) * 100)}%`
 			: fails.length > 1 ? `All ${fails.length} tests failing`
 			: false,
-		...settings.footer(),
+		...options.footer,
 	]
-		.filter(v => v !== false)
+		.filter(v => v === undefined || v !== false)
 		.join('\n')
 }

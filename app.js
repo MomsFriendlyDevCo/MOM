@@ -64,7 +64,7 @@ if (opts.env) {
 	Object.entries(config)
 		.filter(([module, config]) => module && config.enabled)
 		.forEach(([module, config]) => {
-			if (!opts.verbose) console.warn('Load module', module, config);
+			if (opts.verbose) console.warn('Load module', module, config);
 			sanity.use(module, config)
 		})
 }

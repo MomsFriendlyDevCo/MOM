@@ -1,6 +1,10 @@
 import Knex from 'knex';
 import {URL} from 'node:url';
 
+export function isAvailable() {
+	throw new Error('Module not yet available');
+}
+
 /**
 * Check MySQL database connectivity + other functionality
 * @param {Object} options The options to mutate behaviour

@@ -4,8 +4,17 @@ import {platform as osPlatform} from 'node:os';
 
 let platform = osPlatform();
 
+export function config({Schema}) {
+	return new Schema({
+		path: {type: String, required: true},
+		mountAlias: {type: String, required: false},
+		warnPercent: {type: Number, default: 20},
+		critPercent: {type: Number, default: 10},
+	});
+}
+
+
 export function isAvailable() {
-	throw new Error('NOPE!');
 	if (!['darwin', 'freebsd', 'linux', 'openbsd', 'sunos'].includes(platform))
 		throw new Error('Cannot check diskspace on non Unix compatible systems');
 }
@@ -21,19 +30,10 @@ export function isAvailable() {
 * @returns {SanityModuleResponse}
 */
 export function run({options}) {
-	console.log('USE OPTIONS', options);
-	let settings = {
-		path: null,
-		mountAlias: null,
-		warnPercent: 20,
-		critPercent: 10,
-		...options,
-	};
-	if (!settings.path) throw new Error('Must specify `path` option');
-	if (!settings.pathAlias) settings.pathAlias = settings.path;
+	if (!options.mountAlias) options.mountAlias = options.path;
 
 	return Promise.resolve()
-		.then(()=> execa('df', [settings.path]))
+		.then(()=> execa('df', [options.path]))
 		.then(({stdout}) => stdout.split('\n').slice(1).at(0)) // Remove first line (headers)
 		.then(line => line.split(/\s+/)) // Split first line by whitespace
 		.then(line => {
@@ -49,24 +49,24 @@ export function run({options}) {
 			return data;
 		})
 		.then(data => {
-			let status = data.freePercent < settings.critPercent ? 'CRIT'
-				: data.freePercent < settings.warnPercent ? 'WARN'
+			let status = data.freePercent < options.critPercent ? 'CRIT'
+				: data.freePercent < options.warnPercent ? 'WARN'
 				: 'OK';
 
 			return {
 				status,
 				message:
 					status == 'OK'
-					? `${readable.fileSize(data.used) || '0b'} / ${readable.fileSize(data.size)} @ ${data.freePercent}% free for ${settings.mountAlias || data.mount} mount point`
-					: `Only ${readable.fileSize(data.avail) || '0b'} ~ ${data.freePercent}% disk remaining - ${readable.fileSize(data.used)} / ${readable.fileSize(data.size)} @ ${data.usePercent}% used for ${settings.mountAlias || data.mount} mount point`,
-				description: `Disk usage at ${settings.mountAlias || data.mount}`,
+					? `${readable.fileSize(data.used) || '0b'} / ${readable.fileSize(data.size)} @ ${data.freePercent}% free for ${options.mountAlias || data.mount} mount point`
+					: `Only ${readable.fileSize(data.avail) || '0b'} ~ ${data.freePercent}% disk remaining - ${readable.fileSize(data.used)} / ${readable.fileSize(data.size)} @ ${data.usePercent}% used for ${options.mountAlias || data.mount} mount point`,
+				description: `Disk usage at ${options.mountAlias || data.mount}`,
 				metric: {
 					id: 'spaceAvailable',
 					type: 'numeric',
 					unit: 'bytes',
 					value: data.used,
-					warnValue: '>=' + (settings.warnPercent / 100) * data.size,
-					critValue: '>=' + (settings.critPercent / 100) * data.size,
+					warnValue: '>=' + (options.warnPercent / 100) * data.size,
+					critValue: '>=' + (options.critPercent / 100) * data.size,
 				},
 			};
 		});

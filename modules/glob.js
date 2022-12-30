@@ -1,5 +1,13 @@
 import {globby} from 'globby';
 
+export function config({Schema}) {
+	return new Schema({
+		glob: {type: String, required: true},
+		warnNumber: {type: Number, default: 1},
+		critNumber: {type: Number, default: 1},
+	});
+}
+
 /**
 * Check the various globs for presence on disk
 * @param {Object} options The options to mutate behaviour
@@ -9,31 +17,24 @@ import {globby} from 'globby';
 * @returns {SanityModuleResponse}
 */
 export function run({options}) {
-	let settings = {
-		glob: null,
-		warnNumber: 1,
-		critNumber: 1,
-		...options,
-	};
+	if (!options.glob || !options.glob.length) throw new Error('Must specify at least one glob in `glob` key');
 
-	if (!settings.glob || !settings.glob.length) throw new Error('Must specify at least one glob in `glob` key');
-
-	return globby(settings.glob)
+	return globby(options.glob)
 		.then(results => ({
 			status:
-				results.length < settings.critNumber ? 'CRIT'
-				: results.length < settings.warnNumber ? 'WARN'
+				results.length < options.critNumber ? 'CRIT'
+				: results.length < options.warnNumber ? 'WARN'
 				: 'OK',
 			message: `Found ${results.length} matches`,
-			description: Array.isArray(settings.glob)
-				? 'File count with globs ' + settings.glob.map(g => `"${g}"`).join(', ')
-				: `File count with glob "${settings.glob}"`,
+			description: Array.isArray(options.glob)
+				? 'File count with globs ' + options.glob.map(g => `"${g}"`).join(', ')
+				: `File count with glob "${options.glob}"`,
 			metric: {
 				id: 'fileCount',
 				type: 'numeric',
 				value: results.length,
-				warnValue: `<${settings.warnNumber}`,
-				critValue: `<${settings.critNumber}`,
+				warnValue: `<${options.warnNumber}`,
+				critValue: `<${options.critNumber}`,
 			},
 		}))
 }
