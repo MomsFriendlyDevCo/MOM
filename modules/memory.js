@@ -76,6 +76,6 @@ export function run({options}) {
 			message: stats.map(m =>
 				`${m.field.title}: ${bytes(m.metric.value)} / ${bytes(m.metric.valueMax)} ~ ${m.percent}%`,
 			).join(', '),
-			metric: stats.map(m => m.metric),
+			metrics: stats.map(m => m.metric),
 		}))
 }
