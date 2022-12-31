@@ -139,7 +139,12 @@ let runner = ()=> Promise.resolve()
 		}
 	})
 	.finally(()=> {
-		if (opts.loop == 0 || runCount < opts.loop) setTimeout(runner, loopPause); // Queue up next run if we can loop more
+		if (opts.loop == 0 || runCount < opts.loop) { // Queue up next run if we can loop more
+			setTimeout(runner, loopPause);
+		} else {
+			return sanity.shutdown() // Close off all waiting modules / reporters
+				.then(()=> process.exit(0))
+		}
 	})
 
 runner(); // Kick off initial run loop
