@@ -48,7 +48,6 @@ export function run({options, state}) {
 					result,
 					metric: {
 						id: `${collection}.count`,
-						type: 'numeric',
 						value: count,
 						description: `Check db.${collection}.count()`,
 					},
@@ -56,7 +55,7 @@ export function run({options, state}) {
 				{
 					metric: {
 						id: `${collection}.countTime`,
-						type: 'timeMs',
+						unit: 'timeMs',
 						value: Date.now() - startTime,
 						description: `Time to run db.${collection}.count()`,
 					},

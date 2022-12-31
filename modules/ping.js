@@ -40,7 +40,6 @@ export function run({options}) {
 				description: 'Measure average Ping from the server',
 				metric: {
 					id: 'avgResponseTime',
-					type: 'numeric',
 					unit: 'timeMs',
 					value: res.avg,
 					critValue: `>${settings.critTimeout}`,
