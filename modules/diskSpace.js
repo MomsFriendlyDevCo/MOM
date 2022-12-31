@@ -1,4 +1,4 @@
-import readable from '@momsfriendlydevco/readable';
+import {bytes} from '@momsfriendlydevco/formatters';
 import {execa} from 'execa';
 import {platform as osPlatform} from 'node:os';
 
@@ -57,8 +57,8 @@ export function run({options}) {
 				status,
 				message:
 					status == 'OK'
-					? `${readable.fileSize(data.used) || '0b'} / ${readable.fileSize(data.size)} @ ${data.freePercent}% free for ${options.mountAlias || data.mount} mount point`
-					: `Only ${readable.fileSize(data.avail) || '0b'} ~ ${data.freePercent}% disk remaining - ${readable.fileSize(data.used)} / ${readable.fileSize(data.size)} @ ${data.usePercent}% used for ${options.mountAlias || data.mount} mount point`,
+					? `${bytes(data.used) || '0b'} / ${bytes(data.size)} @ ${data.freePercent}% free for ${options.mountAlias || data.mount} mount point`
+					: `Only ${bytes(data.avail) || '0b'} ~ ${data.freePercent}% disk remaining - ${bytes(data.used)} / ${bytes(data.size)} @ ${data.usePercent}% used for ${options.mountAlias || data.mount} mount point`,
 				description: `Disk usage at ${options.mountAlias || data.mount}`,
 				metric: {
 					id: 'spaceAvailable',

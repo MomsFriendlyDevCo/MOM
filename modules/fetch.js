@@ -1,5 +1,5 @@
 import axios from 'axios';
-import relativeTime from '#lib/relativeTime';
+import {relativeTime} from '@momsfriendlydevco/formatters';
 import sslChecker from 'ssl-date-checker';
 
 

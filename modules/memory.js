@@ -1,6 +1,6 @@
+import {bytes} from '@momsfriendlydevco/formatters';
 import fs from 'node:fs/promises';
 import {platform as osPlatform} from 'node:os';
-import readable from '@momsfriendlydevco/readable';
 
 let platform = osPlatform();
 
@@ -74,7 +74,7 @@ export function run({options}) {
 				: stats.some(m => m.status == 'WARN') ? 'WARN'
 				: 'OK',
 			message: stats.map(m =>
-				`${m.field.title}: ${readable.fileSize(m.metric.value)} / ${readable.fileSize(m.metric.maxValue)} ~ ${m.percent}%`,
+				`${m.field.title}: ${bytes(m.metric.value)} / ${bytes(m.metric.maxValue)} ~ ${m.percent}%`,
 			).join(', '),
 			metric: stats.map(m => m.metric),
 		}))
