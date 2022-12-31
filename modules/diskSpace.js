@@ -65,7 +65,7 @@ export function run({options}) {
 					type: 'numeric',
 					unit: 'bytes',
 					value: data.used,
-					maxValue: data.size,
+					valueMax: data.size,
 					warnValue: options.warnPercent && `>=${options.warnPercent}%`,
 					critValue: options.critPercent && `>=${options.critPercent}%`,
 				},

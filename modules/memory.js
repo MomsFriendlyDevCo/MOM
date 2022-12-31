@@ -42,12 +42,12 @@ export function run({options}) {
 				.filter(Boolean)
 				.map(field => {
 					let value = keyVals[field.keyFree];
-					let maxValue = keyVals[field.keyTotal];
+					let valueMax = keyVals[field.keyTotal];
 
-					if (!maxValue) throw new Error(`Cannot find maximum ("${field.keyTotal}") to match key "${field.keyFree}"`);
-					value = maxValue - value; // Switch MemoryFree -> MemoryUsed
+					if (!valueMax) throw new Error(`Cannot find maximum ("${field.keyTotal}") to match key "${field.keyFree}"`);
+					value = valueMax - value; // Switch MemoryFree -> MemoryUsed
 
-					let percentFree = (value / maxValue) * 100;
+					let percentFree = (value / valueMax) * 100;
 					let status =
 						options[`${field.prefix}CritPercent`] && percentFree >= options[`${field.prefix}CritPercent`] ? 'CRIT'
 						: options[`${field.prefix}WarnPercent`] && percentFree >= options[`${field.prefix}WarnPercent`] ? 'WARN'
@@ -56,12 +56,12 @@ export function run({options}) {
 					return {
 						status,
 						field,
-						percent: Math.round((value / maxValue) * 100),
+						percent: Math.round((value / valueMax) * 100),
 						metric: {
 							id: field.prefix,
 							unit: 'bytes',
 							value,
-							maxValue,
+							valueMax,
 							warnValue: options[`${field.prefix}WarnPercent`] && `>=${options[`${field.prefix}WarnPercent`]}`,
 							critValue: options[`${field.prefix}CritPercent`] && `>=${options[`${field.prefix}CritPercent`]}`,
 						},
@@ -74,7 +74,7 @@ export function run({options}) {
 				: stats.some(m => m.status == 'WARN') ? 'WARN'
 				: 'OK',
 			message: stats.map(m =>
-				`${m.field.title}: ${bytes(m.metric.value)} / ${bytes(m.metric.maxValue)} ~ ${m.percent}%`,
+				`${m.field.title}: ${bytes(m.metric.value)} / ${bytes(m.metric.valueMax)} ~ ${m.percent}%`,
 			).join(', '),
 			metric: stats.map(m => m.metric),
 		}))
