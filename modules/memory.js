@@ -23,8 +23,7 @@ export function isAvailable() {
 
 export function run({options}) {
 	return fs.readFile('/proc/meminfo', 'utf-8')
-		.then(content => content.split('\n'))
-		.then(lines => lines
+		.then(content => content.split('\n')
 			.map(line => {
 				let {key, val} =
 					/^(?<key>.+):\s*(?<val>\d+) kB$/.exec(line)?.groups || {};
