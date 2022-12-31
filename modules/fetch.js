@@ -59,7 +59,7 @@ export function run({options}) {
 					: options.keywordNegative && !options.keywordNegative.test(response.data) ? 'CRIT'
 					: 'OK',
 				message: [
-					`Fetched in ${relativeTime(now)}`,
+					`Fetched in ${relativeTime(startTime)}`,
 					options.keyword && options.keyword.test(response.data) ?  'Keyword found!' : false,
 					options.keywordNegative && options.keywordNegative.test(response.data) ?  'Negative Keyword found!' : false,
 					options.checkSSL && `${sslRemainingHuman} time remaining until SSL expiry`,
