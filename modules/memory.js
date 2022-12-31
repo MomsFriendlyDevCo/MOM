@@ -56,12 +56,12 @@ export function run({options}) {
 					return {
 						status,
 						field,
-						maxValue,
 						percent: Math.round((value / maxValue) * 100),
 						metric: {
 							id: field.prefix,
 							unit: 'bytes',
 							value,
+							maxValue,
 							warnValue: options[`${field.prefix}WarnPercent`] && `>=${options[`${field.prefix}WarnPercent`]}`,
 							critValue: options[`${field.prefix}CritPercent`] && `>=${options[`${field.prefix}CritPercent`]}`,
 						},
@@ -74,7 +74,7 @@ export function run({options}) {
 				: stats.some(m => m.status == 'WARN') ? 'WARN'
 				: 'OK',
 			message: stats.map(m =>
-				`${m.field.title}: ${readable.fileSize(m.metric.value)} / ${readable.fileSize(m.maxValue)} ~ ${m.percent}%`,
+				`${m.field.title}: ${readable.fileSize(m.metric.value)} / ${readable.fileSize(m.metric.maxValue)} ~ ${m.percent}%`,
 			).join(', '),
 			metric: stats.map(m => m.metric),
 		}))

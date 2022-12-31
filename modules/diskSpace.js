@@ -65,8 +65,9 @@ export function run({options}) {
 					type: 'numeric',
 					unit: 'bytes',
 					value: data.used,
-					warnValue: '>=' + (options.warnPercent / 100) * data.size,
-					critValue: '>=' + (options.critPercent / 100) * data.size,
+					maxValue: data.size,
+					warnValue: options.warnPercent && `>=${options.warnPercent}%`,
+					critValue: options.critPercent && `>=${options.critPercent}%`,
 				},
 			};
 		});
