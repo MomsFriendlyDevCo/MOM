@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 export function config({Schema}) {
 	return new Schema({
 		uri: {type: 'mongouri', required: true},
-		model: {type: 'keyval', required: true, min: 1},
+		collections: {type: 'keyvals', required: true, min: 1},
 	});
 }
 
@@ -27,41 +27,49 @@ export function init({options, state}) {
 }
 
 
-/**
-* Check mongo database connectivity + other functionality
-* @param {Object} options The options to mutate behaviour
-* @param {Object} [options.models] Model spec to check, each key is a collection with the object value specifying options
-* @param {Number} [options.models.minCount=1] Minimum document count to accept
-* @returns {SanityModuleResponse}
-*/
 export function run({options, state}) {
 	return Promise.all(
-		Object.entries(options.models).map(([collection, colOptions]) => {
-			let coloptions = {
-				minCount: 1,
-				...colOptions,
-			};
-
-			return Promise.resolve()
-				.then(()=> {
-					if (!state.connection.models[collection]) { // Schema not defined - make a blank one
-						state.connection.model(collection, {});
-					}
-				})
-				.then(()=> state.connection.models[collection].countDocuments())
-				.then(docCount => ({
-					id: collection,
-					status: docCount < coloptions.minCount ? 'CRIT' : 'OK',
-					message: `Found ${docCount} documents`,
-					description: `Documents in db.${collection}`,
+		Object.entries(options.collections).map(([collection, colEval]) => Promise.resolve()
+			.then(()=> {
+				if (!state.connection.models[collection]) { // Schema not defined - make a blank one
+					state.connection.model(collection, {});
+				}
+			})
+			.then(()=> state.connection.models[collection].countDocuments())
+			.then(count => ({
+				count,
+				startTime: Date.now(),
+				result: eval(colEval, {
+					count,
+				}),
+			}))
+			.then(({count, startTime, result}) => [
+				{
+					result,
 					metric: {
 						id: `${collection}.count`,
 						type: 'numeric',
-						value: docCount,
-						critValue: `>=${colOptions.minCount}`,
-						description: `Check db.${collection}.count() >= ${coloptions.minCount}`,
+						value: count,
+						description: `Check db.${collection}.count()`,
 					},
-				}))
-		})
+				},
+				{
+					metric: {
+						id: `${collection}.countTime`,
+						type: 'timeMs',
+						value: Date.now() - startTime,
+						description: `Time to run db.${collection}.count()`,
+					},
+				},
+			])
+		)
 	)
+		.then(stats => stats.flat())
+		.then(stats => ({
+			status:
+				stats.some(s => s.result === false) ? 'CRIT'
+				: 'OK',
+			message: `Check ${Object.keys(options.collections).length} collections`,
+			metrics: stats.flatMap(s => s.metric),
+		}))
 }
