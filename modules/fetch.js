@@ -68,7 +68,7 @@ export function run({options}) {
 				metrics: [
 					{
 						id: 'responseTime',
-						type: 'timeMs',
+						unit: 'timeMs',
 						value: responseTime,
 						warnValue: `>=${options.critMaxTime}`,
 						critValue: `>=${options.critMaxTime}`,
@@ -77,7 +77,7 @@ export function run({options}) {
 					...(options.checkSSL
 						? [{
 							id: 'sslExpireTime',
-							type: 'timeMs',
+							unit: 'timeMs',
 							value: sslRemaining,
 							warnValue: `>=${options.warnSSLRemaming}`,
 							critValue: `>=${options.critSSLRemaming}`,
