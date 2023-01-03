@@ -8,7 +8,7 @@
   },
   "type": "module",
   "bin": {
-    "sanity": "./app.js"
+    "mom": "./mom.js"
   },
   "imports": {
     "#lib/*": "./lib/*.js",
