@@ -1,5 +1,16 @@
 import ping from 'ping';
 
+export function config({Schema}) {
+	return new Schema({
+		host: {type: String, required: true, default: '8.8.8.8'},
+		hostAlias: {type: String, default: ''},
+		repeat: {type: Number, default: 3},
+		critTimeout: {type: Number, default: 500},
+		warnTimeout: {type: Number, default: 100},
+	});
+}
+
+
 /**
 * Ping remote servers and check for response times
 * @param {Object} options The options to mutate behaviour
@@ -11,40 +22,30 @@ import ping from 'ping';
 * @returns {SanityModuleResponse}
 */
 export function run({options}) {
-	let settings = {
-		host: '8.8.8.8',
-		hostAlias: null,
-		repeat: 3,
-		critTimeout: 500,
-		warnTimeout: 100,
-		...options,
-	}
-	if (!settings.host) throw new Error('No `host` key specified');
-
-	return ping.promise.probe(settings.host, {
-		min_reply: settings.repeat,
-		deadline: settings.critTimeout,
+	return ping.promise.probe(options.host, {
+		min_reply: options.repeat,
+		deadline: options.critTimeout,
 	})
 		.then(res => {
 			let status =
 				!res.alive ? 'CRIT'
-				: res.avg > settings.critTimeout ? 'CRIT'
-				: res.avg > settings.warnTimeout ? 'WARN'
+				: res.avg > options.critTimeout ? 'CRIT'
+				: res.avg > options.warnTimeout ? 'WARN'
 				: 'OK';
 
 			return {
 				status,
 				message: res.alive
-					? `Ping average to ${settings.hostAlias || settings.host} AVG=${res.avg} (MIN=${res.min} / MAX=${res.max})`
-					: `Server ${settings.hostAlias} is down or non-responsive`,
+					? `Ping average to ${options.hostAlias || options.host} AVG=${res.avg} (MIN=${res.min} / MAX=${res.max})`
+					: `Server ${options.hostAlias} is down or non-responsive`,
 				description: 'Measure average Ping from the server',
 				metric: {
 					id: 'avgResponseTime',
 					unit: 'timeMs',
 					value: res.avg,
-					critValue: `>${settings.critTimeout}`,
-					warnValue: `>${settings.warnTimeout}`,
-					description: `Average ping time to ${settings.host}`,
+					critValue: `>${options.critTimeout}`,
+					warnValue: `>${options.warnTimeout}`,
+					description: `Average ping time to ${options.host}`,
 				},
 			};
 		});
