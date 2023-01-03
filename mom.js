@@ -1,7 +1,7 @@
 #!/usr/bin/node
 import {dirName, importAll} from '@momsfriendlydevco/es6';
 import {program} from 'commander';
-let __dirname = dirName();
+global.__dirname = dirName();
 
 Promise.resolve()
 	// Load all commands {{{

@@ -1,4 +1,3 @@
-#!/usr/bin/node
 import chalk from 'chalk';
 import {Command} from 'commander';
 import {DotEnv} from '@momsfriendlydevco/dotenv';
@@ -8,7 +7,7 @@ import timestring from 'timestring';
 export function command() {
 	return new Command()
 		.name('run')
-		.usage('run [options]')
+		.description('Run one (or more) cycles of MOM')
 		.option('-j, --json', 'Shorthand for `-r json`')
 		.option('-m, --module <mod=opt1:val1,opt2:val2>', 'Enable a module and set options (can specify multiple times)', (v, t) => { // {{{
 			let {module, args} = /^(?<module>.+?)(?:=(?<args>.+))?$/.exec(v).groups || {};
@@ -37,7 +36,7 @@ export function command() {
 		.option('-l, --loop [times]', 'Repeat output the specifed number of times. Use "0" for forever', 1)
 		.option('-p, --loop-pause [timestring]', 'Wait for a timestring-compatible delay between each loop. Use "0" to disable', '10s')
 		.option('-v, --verbose', 'Be more verbose')
-		.option('--no-env', 'Disable trying to read in config from .env files')
+		.option('--env <path>', 'Specify alternate .env file to use for config, set `--env=none` to disable completely')
 		.option('--no-headers', 'Disable header seperators if multiple reporters return content')
 		.action(commandRun)
 }
@@ -45,11 +44,14 @@ export function command() {
 export function commandRun(opts) {
 	let sanity = new Sanity();
 
+	if (opts.env) sanity.debug('Using .env override path', opts.env);
+
 	// Load Modules {{{
-	if (opts.env && opts.module.length == 0) {
+	if (opts.env !== 'none' && opts.module.length == 0) {
 		// Load modules from .env* files {{{
+		sanity.debug('Loading modules from .env');
 		let config = new DotEnv()
-			.parse([
+			.parse(opts.env || [
 				'.env.example',
 				'.env',
 			])
@@ -71,6 +73,7 @@ export function commandRun(opts) {
 		// }}}
 	} else if (opts.module.length > 0) {
 		// Load modules from CLI {{{
+		sanity.debug('Loading modules from CLI only');
 		opts.module.forEach(({module, args}) =>
 			sanity.use(module, args)
 		);
@@ -81,10 +84,11 @@ export function commandRun(opts) {
 	// }}}
 
 	// Load Reporters {{{
-	if (opts.env && opts.reporter.length == 0) {
+	if (opts.env !== 'none' && opts.reporter.length == 0) {
 		// Load reporters from .env* files {{{
+		sanity.debug('Loading reporters from .env');
 		let config = new DotEnv()
-			.parse([
+			.parse(opts.env || [
 				'.env.example',
 				'.env',
 			])
@@ -106,6 +110,7 @@ export function commandRun(opts) {
 		// }}}
 	} else if (opts.reporter.length > 0) {
 		// Load reporters from CLI {{{
+		sanity.debug('Loading reporters from CLI only');
 		opts.reporter.forEach(({reporter, args}) =>
 			sanity.reporter(reporter, args)
 		);
