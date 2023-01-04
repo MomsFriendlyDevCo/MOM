@@ -30,8 +30,8 @@ export function run({options, responses}) {
 
 	return [
 		fails.length > 0
-			? options.styleSummaryFail('SANITY:FAIL')
-			: options.styleSummaryOk('SANITY:OK'),
+			? options.styleSummaryFail('MOM:FAIL')
+			: options.styleSummaryOk('MOM:OK'),
 		...options.header,
 		'',
 		...fails.map(m => `${formatStatus(m.status)}: ${options.styleModule(m.id)}: ${m.message}`),

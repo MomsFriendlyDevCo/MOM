@@ -1,7 +1,7 @@
 
 import {DotEnv} from '@momsfriendlydevco/dotenv';
 import {expect} from 'chai';
-import {Sanity} from '#lib/sanity';
+import {MOM} from '#lib/MOM';
 
 describe('Reporter: Honeycomb', ()=> {
 
@@ -9,7 +9,7 @@ describe('Reporter: Honeycomb', ()=> {
 	before('parse config', ()=> {
 		config = new DotEnv()
 			.parse(['.env.example', '.env'])
-			.filterAndTrim(/^SANITY_REPORTER_HONEYCOMB\./)
+			.filterAndTrim(/^MOM_REPORTER_HONEYCOMB\./)
 			.camelCase()
 			.schema({enabled: Boolean})
 			.value()
@@ -20,7 +20,7 @@ describe('Reporter: Honeycomb', ()=> {
 
 		this.timeout(30 * 1000);
 
-		return new Sanity()
+		return new MOM()
 			.use('ping')
 			.reporter('honeycomb', config)
 			.runAll()

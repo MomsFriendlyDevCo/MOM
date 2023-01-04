@@ -14,7 +14,7 @@ export function config({Schema}) {
 * @param {String} options.glob The glob to check
 * @param {Number} [options.warnNumber=1] Number of matches to trigger a WARN status
 * @param {Number} [options.critNumber=1] Number of matches to trigger a CRIT status
-* @returns {SanityModuleResponse}
+* @returns {MOMModuleResponse}
 */
 export function run({options}) {
 	if (!options.glob || !options.glob.length) throw new Error('Must specify at least one glob in `glob` key');

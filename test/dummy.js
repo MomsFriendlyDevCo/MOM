@@ -1,12 +1,12 @@
 import {expect} from 'chai';
-import {Sanity} from '#lib/sanity';
+import {MOM} from '#lib/MOM';
 
 describe('Module: Dummy', ()=> {
 
-	it('should return a SanityModuleResponse', function() {
+	it('should return a MOMModuleResponse', function() {
 		this.timeout(30 * 1000);
 
-		return new Sanity()
+		return new MOM()
 			.use('dummy', {status: 'OK'})
 			.runAll()
 			.then(res => {
@@ -26,8 +26,8 @@ describe('Module: Dummy', ()=> {
 			})
 	});
 
-	it('should return multiple SanityModuleResponses if given multiple identical tests', ()=>
-		new Sanity()
+	it('should return multiple MOMModuleResponses if given multiple identical tests', ()=>
+		new MOM()
 			.use('dummy', {status: 'OK', times: 3})
 			.runAll()
 			.then(res => {

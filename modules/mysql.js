@@ -44,7 +44,7 @@ export function init({options}) {
 * @param {String} options.connection The MySQL+KNEX connector to use
 * @param {Object} [options.tables] Table spec to check, each key is a collection with the object value specifying options
 * @param {Number} [options.tables.minCount=1] Minimum row count to accept
-* @returns {SanityModuleResponse}
+* @returns {MOMModuleResponse}
 */
 export function run({options}) {
 	let settings = {

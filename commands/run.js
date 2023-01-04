@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import {Command} from 'commander';
 import {DotEnv} from '@momsfriendlydevco/dotenv';
-import {Sanity} from '#lib/sanity';
+import {MOM} from '#lib/MOM';
 import timestring from 'timestring';
 
 export function command() {
@@ -42,21 +42,21 @@ export function command() {
 }
 
 export function commandRun(opts) {
-	let sanity = new Sanity();
+	let mom = new MOM();
 
-	if (opts.env) sanity.debug('Using .env override path', opts.env);
+	if (opts.env) mom.debug('Using .env override path', opts.env);
 
 	// Load Modules {{{
 	if (opts.env !== 'none' && opts.module.length == 0) {
 		// Load modules from .env* files {{{
-		sanity.debug('Loading modules from .env');
+		mom.debug('Loading modules from .env');
 		let config = new DotEnv()
 			.parse(opts.env || [
 				'.env.example',
 				'.env',
 			])
 			.schemaGlob(/\.ENABLED$/, Boolean) // Type cast all *_ENABLE values
-			.filterAndTrim(/^SANITY_MODULE_/)
+			.filterAndTrim(/^MOM_MODULE_/)
 			.toTree(/\./)
 			.deep()
 			.camelCase()
@@ -68,14 +68,14 @@ export function commandRun(opts) {
 			.filter(([module, config]) => module && config.enabled)
 			.forEach(([module, config]) => {
 				if (opts.verbose) console.warn(`Load MODULE:${module} config:`, config);
-				sanity.use(module, config)
+				mom.use(module, config)
 			})
 		// }}}
 	} else if (opts.module.length > 0) {
 		// Load modules from CLI {{{
-		sanity.debug('Loading modules from CLI only');
+		mom.debug('Loading modules from CLI only');
 		opts.module.forEach(({module, args}) =>
-			sanity.use(module, args)
+			mom.use(module, args)
 		);
 		// }}}
 	} else {
@@ -86,14 +86,14 @@ export function commandRun(opts) {
 	// Load Reporters {{{
 	if (opts.env !== 'none' && opts.reporter.length == 0) {
 		// Load reporters from .env* files {{{
-		sanity.debug('Loading reporters from .env');
+		mom.debug('Loading reporters from .env');
 		let config = new DotEnv()
 			.parse(opts.env || [
 				'.env.example',
 				'.env',
 			])
 			.schemaGlob(/\.ENABLED$/, Boolean) // Type cast all *_ENABLE values
-			.filterAndTrim(/^SANITY_REPORTER_/)
+			.filterAndTrim(/^MOM_REPORTER_/)
 			.toTree(/\./)
 			.deep()
 			.camelCase()
@@ -105,14 +105,14 @@ export function commandRun(opts) {
 			.filter(([reporter, config]) => reporter && config.enabled)
 			.forEach(([reporter, config]) => {
 				if (opts.verbose) console.warn(`Load REPORTER:${reporter} config:`, config);
-				sanity.reporter(reporter, config)
+				mom.reporter(reporter, config)
 			})
 		// }}}
 	} else if (opts.reporter.length > 0) {
 		// Load reporters from CLI {{{
-		sanity.debug('Loading reporters from CLI only');
+		mom.debug('Loading reporters from CLI only');
 		opts.reporter.forEach(({reporter, args}) =>
-			sanity.reporter(reporter, args)
+			mom.reporter(reporter, args)
 		);
 		// }}}
 	} else {
@@ -128,7 +128,7 @@ export function commandRun(opts) {
 			+ (opts.loop > 0 ? `/${opts.loop}` : '')
 			+ ` (${new Date().toISOString()})`
 		)))
-		.then(()=> sanity.runAll())
+		.then(()=> mom.runAll())
 		.then((responses) => {
 			runCount++;
 			if (Object.keys(responses).length == 0) {
@@ -147,7 +147,7 @@ export function commandRun(opts) {
 			if (opts.loop == 0 || runCount < opts.loop) { // Queue up next run if we can loop more
 				setTimeout(runner, loopPause);
 			} else {
-				return sanity.shutdown() // Close off all waiting modules / reporters
+				return mom.shutdown() // Close off all waiting modules / reporters
 					.then(()=> process.exit(0))
 			}
 		})

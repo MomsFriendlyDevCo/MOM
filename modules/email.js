@@ -7,8 +7,8 @@ export function config({Schema}) {
 		uri: {type: 'uri', required: true, help: 'SMTP details in the form smtp://USER:PASS@SERVER[:PORT]'},
 		from: {type: 'email', required: true},
 		to: {type: 'emails', required: true},
-		subject: {type: String, default: 'Sanity test email'},
-		text: {type: String, default: 'This is a test email sent from the Sanity email checker'},
+		subject: {type: String, default: 'MOM test email'},
+		text: {type: String, default: 'This is a test email sent from the MOM email checker'},
 		warnDispatchTime: {type: 'duration', default: '1m'},
 		critDispatchTime: {type: 'duration', default: '5m'},
 	})

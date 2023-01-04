@@ -3,7 +3,7 @@ import {Command} from 'commander';
 import {Schema as DotEnvSchema} from '@momsfriendlydevco/dotenv/Schema';
 import fsPath from 'node:path';
 import {globby} from 'globby';
-import {Sanity} from '#lib/sanity';
+import {MOM} from '#lib/MOM';
 
 export function command() {
 	return new Command()
@@ -17,7 +17,7 @@ export function command() {
 }
 
 export function commandRun(opts) {
-	let sanity = new Sanity();
+	let mom = new MOM();
 
 	return Promise.resolve()
 		.then(()=> {
@@ -30,8 +30,8 @@ export function commandRun(opts) {
 		.then(files => Promise.all(files.map(path =>
 			import(path)
 				.then(mod => Promise.all([
-					sanity.callPlugin(mod, 'config'),
-					sanity.callPlugin(mod, 'isAvailable')
+					mom.callPlugin(mod, 'config'),
+					mom.callPlugin(mod, 'isAvailable')
 						.then(()=> true)
 						.catch(e => e.toString()),
 				]))

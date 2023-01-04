@@ -2,14 +2,14 @@ import axios from 'axios';
 import {expect} from 'chai';
 import express from 'express';
 import expressLogger from 'express-log-url';
-import {Sanity} from '#lib/sanity';
+import {MOM} from '#lib/MOM';
 
 describe('Reporter: Express', ()=> {
 
-	// Setup Sanity instance {{{
-	let sanity;
-	before('setup Sanity instance', ()=> {
-		sanity = new Sanity()
+	// Setup MOM instance {{{
+	let mom;
+	before('setup MOM instance', ()=> {
+		mom = new MOM()
 			.use('diskSpaceTemp')
 			.use('ping')
 	});
@@ -25,19 +25,19 @@ describe('Reporter: Express', ()=> {
 		app.use(expressLogger);
 		app.set('log.indent', '      ');
 
-		sanity.reporter('express', {app});
+		mom.reporter('express', {app});
 
 		server = app.listen(port, null, finish);
 	});
 	after(()=> server && server.close());
 	// }}}
 
-	before('wait for sanity to load', ()=> sanity.promise());
+	before('wait for MOM to load', ()=> mom.promise());
 
 	it('should return text output', function() {
 		this.timeout(30 * 1000);
 
-		return axios.get(`${url}/api/sanity`)
+		return axios.get(`${url}/api/mom`)
 			.then(({data}) => {
 				console.log('---START---\n', data, '\n---EOF---');
 

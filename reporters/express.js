@@ -3,14 +3,14 @@ import {run as textReporter} from '#reporters/text';
 export function init({options}) {
 	let settings = {
 		app: null,
-		path: '/api/sanity',
+		path: '/api/mom',
 		middleware: [],
 		header: (req, res) => [], // eslint-disable-line no-unused-vars
 		footer: (req, res) => [], // eslint-disable-line no-unused-vars
 		...options,
 	};
 
-	// Sanity checks {{{
+	// MOM checks {{{
 	['app', 'path'].forEach(k => {
 		if (!settings[k]) throw new Error(`Must provide "${k}" key`);
 	});

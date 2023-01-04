@@ -1,11 +1,11 @@
 import {dirName} from '@momsfriendlydevco/es6';
 import {expect} from 'chai';
-import {Sanity} from '#lib/sanity';
+import {MOM} from '#lib/MOM';
 
 describe('Module: Glob', ()=> {
 
-	it('should return a SanityModuleResponse', ()=>
-		new Sanity()
+	it('should return a MOMModuleResponse', ()=>
+		new MOM()
 			.use('glob', {glob: `${dirName()}/*.js`})
 			.runAll()
 			.then(res => {

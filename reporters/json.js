@@ -1,6 +1,6 @@
 import {inspect} from 'node:util';
 import jsonColorizer from 'json-colorizer';
-import SanityResponseMetric from '#lib/sanityResponseMetric';
+import MOMResponseMetric from '#lib/MOMResponseMetric';
 
 /**
 * Output responses as JSON
@@ -20,7 +20,7 @@ export function config({Schema}) {
 export function run({responses, options}) {
 	if (options.human) {
 		responses.forEach(response =>
-			response.metrics = response.metrics.map(SanityResponseMetric.decorate)
+			response.metrics = response.metrics.map(MOMResponseMetric.decorate)
 		);
 	}
 

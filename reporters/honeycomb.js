@@ -3,73 +3,62 @@ import {HoneycombSDK} from '@honeycombio/opentelemetry-node';
 import {metrics as OTMetrics} from '@opentelemetry/api';
 
 
+export function config({Schema}) {
+	return new Schema({
+		apiKey: String,
+		serviceName: String,
+		installStandard: {type: Boolean, default: false},
+		dataSet: {type: String, default: 'example-dataset'},
+		meter:  {type: String, default: 'example-meter'},
+		attributes: {type: Object, default: {}},
+		dryRun: {type: Boolean, default: true},
+	});
+}
+
+
 /**
 * Write results to Honeycomb.io
 * @param {Object} options The options to mutate behaviour
-* @param {String} [options.connection] The HoneycombSDK connector to use, must specify this or `uri`
 * @param {String} [options.apiKey] Honeycomb APi Key used to establish a connection
 * @param {String} [options.serviceName] Honeycomb service name used to establish a connection
 * @param {Boolean} [options.installStandard=false] Also install standard background Node instrumentations
 * @param {Boolean} [options.dataSet='example-dataset'] The name of the Metrics data set to export to
 */
-export function init({options}) {
-	let settings = {
-		connection: null,
-		apiKey: null,
-		serviceName: null,
-		installStandard: true,
-		dataSet: 'example-dataset',
-		meter: 'example-meter',
-		attributes: {},
-		...options,
-	};
+export function init({options, state}) {
+	options.metrics = {}; // Create storage for metric handles (during run)
+	state.connection = new HoneycombSDK({
+		apiKey: options.apiKey,
+		serviceName: options.serviceName,
+		debug: false,
+		instrumentations: [
+			(options.installStandard ? [getNodeAutoInstrumentations()] : []),
+		],
+		metricsDataset: options.dataSet,
+	});
 
-	if (!settings.connection && !settings.apiKey) {
-		throw new Error('Must specify `connection` or `apiKey` key');
-	} else if (!settings.connection) { // Use apiKey + serviceName to establish connection
-		options.metrics = {}; // Create storage for metric handles (during run)
-		options.connection = new HoneycombSDK({
-			apiKey: settings.apiKey,
-			serviceName: settings.serviceName,
-			debug: true,
-			instrumentations: [
-				(settings.installStandard ? [getNodeAutoInstrumentations()] : []),
-			],
-			metricsDataset: options.dataSet,
-		});
-
-		return options.connection.start()
-	}
+	return state.connection.start()
 }
 
 
 /**
 * Push stats to Prometheus
 */
-export function run({metrics, sanity, options}) {
-	let settings = {
-		connection: null,
-		apiKey: null,
-		serviceName: null,
-		installStandard: true,
-		dataSet: 'example-dataset',
-		meter: 'example-meter',
-		attributes: {},
-		dryRun: true,
-		...options,
-	};
-	let meter = OTMetrics.getMeter(settings.meter);
+export function run({options, metrics, mom}) {
+	let meter = OTMetrics.getMeter(options.meter);
 
 	return Promise.all(metrics
 		.filter(metric => metric.value !== undefined) // Only care about metrics with values
 		.map(metric => {
 			// Initalize metric if its not already loaded somewhere {{{
 			if (!options.metrics[metric.id]) {
+				// Taken from https://open-telemetry.github.io/opentelemetry-js/interfaces/_opentelemetry_api.Meter.html
 				switch (metric.type) {
 					case 'numeric':
-						sanity.debug(`Initalizing OpenTelemetry counter for METRIC:${metric.id}`);
+					case 'timeMs':
+						mom.debug(`Initalizing OpenTelemetry counter for METRIC:${metric.id}`);
 						options.metrics[metric.id] = meter.createCounter(metric.id, {
 							description: metric.description,
+							unit: metric.unit,
 						});
 						break;
 					default:
@@ -79,17 +68,27 @@ export function run({metrics, sanity, options}) {
 			// }}}
 
 			// Record metric {{{
-			if (settings.dryRun) {
-				console.log(`Would record METRIC:${metric.id}`, '=', metric.value);
-			} else {
-				return options.metrics[metric.id].add(metric.value, settings.attributes);
-			}
+			return Promise.resolve()
+				.then(()=> !options.dryRun && options.metrics[metric.id].add(metric.value, options.attributes))
+				.then(()=> [
+					options.dryRun && '(DRY-RUN)',
+					metric.id,
+					'=',
+					metric.value,
+					metric.unit && `(unit:${metric.unit})`,
+				]
+					.filter(Boolean).join(' ')
+				)
 			// }}}
 		})
-	);
+	)
+		.then(responses => responses
+			.filter(Boolean)
+			.join('\n')
+		)
 }
 
 
-export function shutdown(options) {
-	if (options.connection) return options.connection.shutdown()
+export function shutdown({state}) {
+	if (state.connection) return state.connection.shutdown()
 }

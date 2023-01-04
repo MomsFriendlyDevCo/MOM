@@ -1,12 +1,12 @@
 import {expect} from 'chai';
-import {Sanity} from '#lib/sanity';
+import {MOM} from '#lib/MOM';
 
 describe('Module: Ping', ()=> {
 
-	it('should return a SanityModuleResponse', function() {
+	it('should return a MOMModuleResponse', function() {
 		this.timeout(30 * 1000);
 
-		return new Sanity()
+		return new MOM()
 			.use('ping')
 			.runAll()
 			.then(res => {

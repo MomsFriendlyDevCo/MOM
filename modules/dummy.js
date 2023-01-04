@@ -12,8 +12,8 @@ export function config({Schema}) {
 * @param {Object} options The options to mutate behaviour
 * @param {String} [options.status='OK'] Status to return
 * @param {String} [options.message='Test message'] Message to return
-* @param {Number} [options.times=1] How many responses to return to simulate a combined Sanity response
-* @returns {SanityModuleResponse}
+* @param {Number} [options.times=1] How many responses to return to simulate a combined MOM response
+* @returns {MOMModuleResponse}
 */
 export function run({options}) {
 	let settings = {

@@ -1,10 +1,10 @@
 import {expect} from 'chai';
-import {Sanity} from '#lib/sanity';
+import {MOM} from '#lib/MOM';
 
 describe('Module: DiskSpaceTemp', ()=> {
 
-	it('should return a SanityModuleResponse', ()=>
-		new Sanity()
+	it('should return a MOMModuleResponse', ()=>
+		new MOM()
 			.use('diskSpaceTemp')
 			.runAll()
 			.then(res => {

@@ -1,4 +1,4 @@
-import SanityResponseMetric from '#lib/sanityResponseMetric';
+import MOMResponseMetric from '#lib/MOMResponseMetric';
 
 export function config({Schema}) {
 	return new Schema({
@@ -20,7 +20,7 @@ export function config({Schema}) {
 export function run({options, metrics}) {
 	return metrics
 		.map(metric => {
-			SanityResponseMetric.decorate(metric);
+			MOMResponseMetric.decorate(metric);
 
 			return [
 				options.prefix && options.stylePrefix(options.prefix),
