@@ -37,8 +37,6 @@ export function config({Schema}) {
 }
 
 export function run({options, mom}) {
-	options.ports = {22: 'ssh', 80: 'http', 666: 'any', 777: 'any'}; // FIXME: Why won't this populate from .env?
-
 	let invalidProtocols = Object.values(options.ports).filter(protocol => !protocols[protocol]);
 	if (invalidProtocols.length > 0) throw new Error(format(`Invalid protocol[s]: [list]${invalidProtocols}[/list]`));
 
