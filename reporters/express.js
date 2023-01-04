@@ -1,14 +1,15 @@
-import {run as textReporter} from '#reporters/text';
-
 export function init({options}) {
 	let settings = {
 		app: null,
 		path: '/api/mom',
 		middleware: [],
+		mom: null,
 		header: (req, res) => [], // eslint-disable-line no-unused-vars
 		footer: (req, res) => [], // eslint-disable-line no-unused-vars
 		...options,
 	};
+
+	if (!settings.mom) throw new Error('Must specify MOM instance');
 
 	// MOM checks {{{
 	['app', 'path'].forEach(k => {
@@ -22,11 +23,14 @@ export function init({options}) {
 			...settings.middleware,
 		].filter(Boolean),
 		(req, res) => Promise.resolve()
-			.then(()=> textReporter.call(this, {
-				options: {
-					formatStatus: v => v, // Disable fancy output
-				},
-			}))
+			.then(()=> settings.mom
+				.runAll()
+				.then(momRes => {
+					console.log('TAP MOMRES:', momRes);
+					return momRes;
+				})
+				.then(momResponse => res.send(momResponse))
+			)
 			.then(text => res.send(text))
 			.catch(e => res.status(400).send('ERROR: CORE: ' + e.toString()))
 	)

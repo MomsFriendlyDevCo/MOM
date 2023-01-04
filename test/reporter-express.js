@@ -25,7 +25,7 @@ describe('Reporter: Express', ()=> {
 		app.use(expressLogger);
 		app.set('log.indent', '      ');
 
-		mom.reporter('express', {app});
+		mom.reporter('express', {app, mom});
 
 		server = app.listen(port, null, finish);
 	});

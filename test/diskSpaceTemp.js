@@ -6,21 +6,24 @@ describe('Module: DiskSpaceTemp', ()=> {
 	it('should return a MOMModuleResponse', ()=>
 		new MOM()
 			.use('diskSpaceTemp')
+			.reporter('raw')
 			.runAll()
 			.then(res => {
-				expect(res).to.be.an('array');
-				expect(res).to.have.length(1);
+				expect(res).to.be.an('object');
+				expect(res).to.have.property('raw');
+				expect(res.raw).to.be.an('array');
+				res = res.raw[0];
 
-				expect(res[0]).to.have.property('id', 'diskSpaceTemp');
+				expect(res).to.have.property('id', 'diskSpaceTemp');
 
-				expect(res[0]).to.have.property('date');
-				expect(res[0].date).to.be.an.instanceOf(Date);
+				expect(res).to.have.property('date');
+				expect(res.date).to.be.an.instanceOf(Date);
 
-				expect(res[0]).to.have.property('status');
-				expect(res[0].status).to.be.oneOf(['OK', 'WARN', 'CRIT', 'ERROR']);
+				expect(res).to.have.property('status');
+				expect(res.status).to.be.oneOf(['OK', 'WARN', 'CRIT', 'ERROR']);
 
-				expect(res[0]).to.have.property('message');
-				expect(res[0].message).to.be.a('string');
+				expect(res).to.have.property('message');
+				expect(res.message).to.be.a('string');
 			})
 	);
 
