@@ -16,19 +16,19 @@
     "#reporters/*": "./reporters/*.js"
   },
   "exports": {
-    ".": "./lib/sanity.js",
+    ".": "./lib/mom.js",
     "./*": "./lib/*.js"
   },
-  "main": "lib/sanity.js",
+  "main": "lib/mom.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MomsFriendlyDevCo/Sanity.git"
+    "url": "git+https://github.com/MomsFriendlyDevCo/MOM.git"
   },
   "author": "Matt Carter <matt@mfdc.biz>",
   "bugs": {
-    "url": "https://github.com/MomsFriendlyDevCo/Sanity/issues"
+    "url": "https://github.com/MomsFriendlyDevCo/MOM/issues"
   },
-  "homepage": "https://github.com/MomsFriendlyDevCo/Sanity#readme",
+  "homepage": "https://github.com/MomsFriendlyDevCo/MOM#readme",
   "engineStrict": true,
   "engines": {
     "node": ">=16.14.0"
@@ -55,7 +55,7 @@
   "dependencies": {
     "@honeycombio/opentelemetry-node": "^0.3.0",
     "@momsfriendlydevco/dotenv": "file:../dotenv",
-    "@momsfriendlydevco/es6": "^1.1.0",
+    "@momsfriendlydevco/es6": "file:../es6",
     "@momsfriendlydevco/formatters": "file:../formatters",
     "@opentelemetry/auto-instrumentations-node": "^0.35.0",
     "@opentelemetry/sdk-metrics": "^1.8.0",
