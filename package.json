@@ -70,6 +70,7 @@
     "knex": "^2.4.0",
     "mongoose": "^6.8.3",
     "mysql": "^2.18.1",
+    "nagu": "^1.0.0",
     "nodemailer": "^6.8.0",
     "ping": "^0.4.2",
     "ssl-date-checker": "^2.0.6",
