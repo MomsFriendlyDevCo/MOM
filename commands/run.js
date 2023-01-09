@@ -55,6 +55,7 @@ export function commandRun(opts) {
 				'.env.example',
 				'.env',
 			])
+			.template()
 			.schemaGlob(/\.ENABLED$/, Boolean) // Type cast all *_ENABLE values
 			.filterAndTrim(/^MOM_MODULE_/)
 			.toTree(/\./)
@@ -92,6 +93,7 @@ export function commandRun(opts) {
 				'.env.example',
 				'.env',
 			])
+			.template()
 			.schemaGlob(/\.ENABLED$/, Boolean) // Type cast all *_ENABLE values
 			.filterAndTrim(/^MOM_REPORTER_/)
 			.toTree(/\./)
