@@ -56,6 +56,7 @@
     "@honeycombio/opentelemetry-node": "^0.3.0",
     "@momsfriendlydevco/dotenv": "file:../dotenv",
     "@momsfriendlydevco/es6": "file:../es6",
+    "@momsfriendlydevco/eventer": "^1.6.1",
     "@momsfriendlydevco/formatters": "file:../formatters",
     "@opentelemetry/auto-instrumentations-node": "^0.36.0",
     "@opentelemetry/sdk-metrics": "^1.8.0",
