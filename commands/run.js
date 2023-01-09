@@ -129,7 +129,7 @@ export function commandRun(opts) {
 			+ ` (${new Date().toISOString()})`
 		)))
 		.then(()=> mom.runAll())
-		.then((responses) => {
+		.then(responses => {
 			runCount++;
 			if (Object.keys(responses).length == 0) {
 				throw new Error('No response output from any selected reporter');
