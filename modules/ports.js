@@ -132,7 +132,8 @@ export function run({options, mom}) {
 						groups.pass.length > 0 && `[list]${groups.pass}[/list] port[s] responded normally`,
 					], {join: ', '})
 					: `Port checks succeeded for [list cutoff=5]${groups.pass}[/list]`,
-			metrics: portReports,
+			metrics: portReports
+				.filter(pr => !pr._err), // Only metric-ize ports that worked
 		};
 	})
 }
