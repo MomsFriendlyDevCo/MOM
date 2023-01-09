@@ -11,7 +11,7 @@ export function config({Schema}) {
 		dataSet: {type: String, default: 'example-dataset'},
 		meter:  {type: String, default: 'example-meter'},
 		attributes: {type: Object, default: {}},
-		dryRun: {type: Boolean, default: true},
+		dryRun: {type: Boolean, default: false},
 	});
 }
 
