@@ -3,15 +3,13 @@ import MOMResponseMetric from '#lib/MOMResponseMetric';
 export function config({Schema}) {
 	return new Schema({
 		human: {type: Boolean, default: true, help: 'Humanize all readings (simplify byte and times)'},
-		header: {type: String, default: ''},
-		footer: {type: String, default: ''},
 		prefix: {type: String, default: ''},
 		stylePrefix: {type: 'style', default: 'bold fgWhite bgBlue'},
 		styleModule: {type: 'style', default: 'bold fgBlue'},
 		styleMetric: {type: 'style', default: 'fgBlue'},
-		styleValueCrit: {type: 'style', default: 'fgRed'},
-		styleValueWarn: {type: 'style', default: 'fgYellow'},
 		styleValueOk: {type: 'style', default: 'fgWhite'},
+		styleValueWarn: {type: 'style', default: 'fgYellow'},
+		styleValueCrit: {type: 'style', default: 'fgRed'},
 		styleValueMax: {type: 'style', default: 'underline fgWhite'},
 		styleMeasures: {type: 'style', default: 'fgGray'},
 	});

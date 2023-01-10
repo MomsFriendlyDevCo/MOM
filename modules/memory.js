@@ -7,12 +7,12 @@ let platform = osPlatform();
 export function config({Schema}) {
 	return new Schema({
 		memory: {type: Boolean, default: true},
-		memoryWarnPercent: {type: Number, default: 90},
-		memoryCritPercent: {type: Number, default: 100},
+		memoryWarnPercent: {type: 'percent', min: 0, max: 100, required: false, default: 0},
+		memoryCritPercent: {type: 'percent', min: 0, max: 100, required: false, default: 0},
 
 		swap: {type: Boolean, default: true},
-		swapWarnPercent: {type: Number, default: 80},
-		swapCritPercent: {type: Number, default: 90},
+		swapWarnPercent: {type: 'percent', min: 0, max: 100, required: false, default: 80},
+		swapCritPercent: {type: 'percent', min: 0, max: 100, required: false, default: 90},
 	});
 }
 

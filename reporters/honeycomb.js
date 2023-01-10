@@ -10,7 +10,7 @@ export function config({Schema}) {
 		installStandard: {type: Boolean, default: false},
 		dataSet: {type: String, default: 'example-dataset'},
 		meter:  {type: String, default: 'example-meter'},
-		attributes: {type: Object, default: {}},
+		attributes: {type: Object, default: ''},
 		dryRun: {type: Boolean, default: false},
 	});
 }

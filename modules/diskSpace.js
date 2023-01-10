@@ -8,8 +8,8 @@ export function config({Schema}) {
 	return new Schema({
 		path: {type: String, required: true},
 		mountAlias: {type: String, default: ''},
-		warnPercent: {type: Number, default: 20},
-		critPercent: {type: Number, default: 10},
+		warnPercent: {type: 'percent', min: 0, max: 100, required: false, default: 20},
+		critPercent: {type: 'percent', min: 0, max: 100, required: false, default: 10},
 	});
 }
 

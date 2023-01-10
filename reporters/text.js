@@ -7,7 +7,7 @@ export function config({Schema}) {
 		styleModule: {type: 'style', default: 'fgBlack bgWhite'},
 		styleStatusOk: {type: 'style', default: 'fgBlack bgGreen'},
 		styleStatusWarn: {type: 'style', default: 'fgBlack bgYellow'},
-		styleStatusRed: {type: 'style', default: 'bold fgWhite bgRed'},
+		styleStatusCrit: {type: 'style', default: 'bold fgWhite bgYellow'},
 		styleStatusError: {type: 'style', default: 'bold fgWhite bgRed'},
 	});
 }
@@ -16,7 +16,7 @@ export function run({options, responses}) {
 	let formatStatus = status =>
 		status == 'OK' ? options.styleStatusOk(status)
 		: status == 'WARN' ? options.styleStatusWarn(status)
-		: status == 'FAIL' ? options.styleStatusFail(status)
+		: status == 'CRIT' ? options.styleStatusCrit(status)
 		: options.styleStatusError(status)
 
 	let {fails, success} = responses.reduce((t, v) => {

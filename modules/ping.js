@@ -5,8 +5,8 @@ export function config({Schema}) {
 		host: {type: String, required: true, default: '8.8.8.8'},
 		hostAlias: {type: String, default: ''},
 		repeat: {type: Number, default: 3},
-		critTimeout: {type: Number, default: 500},
-		warnTimeout: {type: Number, default: 100},
+		warnTimeout: {type: 'duration', default: '100ms'},
+		critTimeout: {type: 'duration', default: '500ms'},
 	});
 }
 

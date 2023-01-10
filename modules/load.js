@@ -5,12 +5,12 @@ let platform = osPlatform();
 
 export function config({Schema}) {
 	return new Schema({
-		proc1Warn: {type: Number, default: 0},
-		proc1Crit: {type: Number, default: 0},
-		proc5Warn: {type: Number, default: 0},
-		proc5Crit: {type: Number, default: 0},
-		proc15Warn: {type: Number, default: 0},
-		proc15Crit: {type: Number, default: 0},
+		proc1Warn: {type: Number, required: false, default: 0},
+		proc1Crit: {type: Number, required: false, default: 0},
+		proc5Warn: {type: Number, required: false, default: 0},
+		proc5Crit: {type: Number, required: false, default: 0},
+		proc15Warn: {type: Number, required: false, default: 0},
+		proc15Crit: {type: Number, required: false, default: 0},
 	});
 }
 
