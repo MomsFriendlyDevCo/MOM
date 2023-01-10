@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "@honeycombio/opentelemetry-node": "^0.3.0",
+    "@momsfriendlydevco/cache": "^2.1.5",
     "@momsfriendlydevco/dotenv": "file:../dotenv",
     "@momsfriendlydevco/es6": "file:../es6",
     "@momsfriendlydevco/eventer": "^1.6.1",

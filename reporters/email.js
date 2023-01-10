@@ -1,6 +1,7 @@
 import {format} from '@momsfriendlydevco/formatters';
 import nagu from 'nagu';
 import nodemailer from 'nodemailer';
+import throttle from '#lib/throttle';
 
 export function config({Schema}) {
 	return new Schema({
@@ -11,6 +12,7 @@ export function config({Schema}) {
 		reporter: {type: String, required: true, enum: ['text'], default: 'text', help: 'Reporter to use for main email body - must be enabled'},
 		reporterAttach: {type: Object, required: false, default: '', help: 'Other reporter content to attach in the form: `reporter:FILENAME.EXT` omit filename to guess', noValue: null},
 		statuses: {type: Set, enum: ['OK', 'WARN', 'CRIT', 'ERROR'], default: 'WARN,CRIT,ERROR', help: 'Which statuses to send emails on'},
+		throttle: {type: 'duration', required: false, default: '0ms', help: 'How often to allow emails to be sent'},
 	})
 }
 
@@ -25,9 +27,19 @@ export function init({options, mom, state}) {
 		},
 	});
 
-	mom.on('runAll', ({mom, reports, maxStatus}) => {
-		// Determine if we need to do anything {{{
-		if (!this.options.statuses.has(maxStatus)) return;
+	mom.on('runAll', async ({mom, reports, maxStatus}) => {
+		// Determine if we need to do anything (maxStatus is something we are interested in) {{{
+		if (!options.statuses.has(maxStatus)) return;
+		// }}}
+		// Check throttling {{{
+		if (options.throttle) {
+			let isThrottled = await throttle.isThrottled('throttle-reporter-email')
+			if (isThrottled) {
+				mom.debug(`Email sending is throttled until ${isThrottled.toISOString()}`);
+			} else {
+				await throttle.createThrottle('throttle-reporter-email', options.throttle);
+			}
+		}
 		// }}}
 
 		// Slurp report content {{{
@@ -40,7 +52,7 @@ export function init({options, mom, state}) {
 
 		let missingReportAttach = Object.keys(options.reporterAttach)
 			.filter(key => !reports[key]);
-		if (missingReportAttach.length > 0) return this.mom.panic(format(`Email reporter missing report output for attachment: [list and quote]${missingReportAttach}[/list] - check [this|these] are enabled`));
+		if (missingReportAttach.length > 0) return mom.panic(format(`Email reporter missing report output for attachment: [list and quote]${missingReportAttach}[/list] - check [this|these] are enabled`));
 		// }}}
 
 		// Try to guess if content is HTML {{{
@@ -54,7 +66,7 @@ export function init({options, mom, state}) {
 		// }}}
 
 		// Dispatch email {{{
-		return state.transport.sendMail({
+		await state.transport.sendMail({
 			from: options.from,
 			to: options.to,
 			subject: options.subject,
