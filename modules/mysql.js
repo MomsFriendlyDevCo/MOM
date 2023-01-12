@@ -1,8 +1,11 @@
 import Knex from 'knex';
-import {URL} from 'node:url';
+import safeEval from '@momsfriendlydevco/eval';
 
-export function isAvailable() {
-	throw new Error('Module not yet available');
+export function config({Schema}) {
+	return new Schema({
+		uri: {type: 'uri', required: true, parse: true},
+		tables: {type: 'keyvals', required: true, min: 1},
+	});
 }
 
 /**
@@ -11,62 +14,59 @@ export function isAvailable() {
 * @param {String} [options.uri] The MySQL URI to use, must specify this or `connection`
 * @param {String} [options.connection] The MySQL+KNEX connector to use
 */
-export function init({options}) {
-	let settings = {
-		connection: null,
-		uri: null,
-		...options,
+export function init({options, state, mom}) {
+	let config = {
+		client: 'mysql',
+		connection: {
+			host: options.uri.hostname,
+			port: +options.uri.port,
+			user: options.uri.username,
+			password: options.uri.password,
+			database: options.uri.pathname.replace(/^\//, ''),
+		},
 	};
+	mom.debug('MySQL Connect with', config);
 
-	if (!settings.uri && !settings.connection) throw new Error('Must specify `connection` option');
-
-	if (!options.connection && options.uri) { // Try to connect
-		let parsedUri = new URL(options.uri);
-		let config = {
-			client: 'mysql',
-			connection: {
-				host: parsedUri.hostname,
-				port: +parsedUri.port,
-				user: parsedUri.username,
-				password: parsedUri.password,
-				database: parsedUri.pathname.replace(/^\//, ''),
-			},
-		};
-		console.log('CONNECT MYSQL', config);
-
-		options.connection = new Knex(config)
-	}
+	state.connection = new Knex(config);
 }
 
-/**
-* Check MySQL database connectivity + other functionality
-* @param {Object} options The options to mutate behaviour
-* @param {String} options.connection The MySQL+KNEX connector to use
-* @param {Object} [options.tables] Table spec to check, each key is a collection with the object value specifying options
-* @param {Number} [options.tables.minCount=1] Minimum row count to accept
-* @returns {MOMModuleResponse}
-*/
-export function run({options}) {
-	let settings = {
-		connection: null,
-		tables: null,
-		...options,
-	};
-
-	if (!settings.tables) throw new Error('At least one table should be specified in the `tables` config key');
-
+export function run({options, state}) {
 	return Promise.all(
-		Object.entries(settings.tables).map(([table, tableOptions]) => {
-			let tableSettings = {
-				minCount: 1,
-				...tableOptions,
-			};
-
-			return settings.connection(table)
-				.count()
-				.then(docCount => {
-					console.log('GOT DOCCOUNT', table, docCount);
-				})
-		})
+		Object.entries(options.tables).map(([table, colEval]) => Promise.resolve()
+			.then(()=> state.connection(table).count())
+			.then(count => ({
+				count,
+				startTime: Date.now(),
+				result: safeEval(colEval, {
+					count,
+				}),
+			}))
+			.then(({count, startTime, result}) => [
+				{
+					result,
+					metric: {
+						id: `${table}.count`,
+						value: count,
+						description: `Check ${table} table row count`,
+					},
+				},
+				{
+					metric: {
+						id: `${table}.countTime`,
+						unit: 'timeMs',
+						value: Date.now() - startTime,
+						description: `Time to run ${table} table row count`,
+					},
+				},
+			])
+		)
 	)
+		.then(stats => stats.flat())
+		.then(stats => ({
+			status:
+				stats.some(s => s.result === false) ? 'CRIT'
+				: 'OK',
+			message: `Check ${Object.keys(options.tables).length} tables`,
+			metrics: stats.flatMap(s => s.metric),
+		}))
 }

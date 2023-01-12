@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import safeEval from '@momsfriendlydevco/eval';
 
 export function config({Schema}) {
 	return new Schema({
@@ -39,7 +40,7 @@ export function run({options, state}) {
 			.then(count => ({
 				count,
 				startTime: Date.now(),
-				result: eval(colEval, {
+				result: safeEval(colEval, {
 					count,
 				}),
 			}))
