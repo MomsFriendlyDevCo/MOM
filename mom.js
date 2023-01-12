@@ -14,7 +14,9 @@ Promise.resolve()
 	// }}}
 	// Prepare main Commander instance (+ commands) {{{
 	.then(commands => {
-		program.name('mom')
+		program
+			.name('mom')
+			.usage('<command>')
 
 		// Add all commands
 		commands
@@ -25,6 +27,7 @@ Promise.resolve()
 			})
 			.forEach(cmd => program.addCommand(cmd.command()))
 
-		return program.parseAsync();
+		return program
+			.parseAsync();
 	})
 	// }}}
