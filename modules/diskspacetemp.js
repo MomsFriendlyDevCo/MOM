@@ -1,4 +1,4 @@
-import {run as DSRun, isAvailable as DSIsAvailable} from '#modules/diskSpace';
+import {run as DSRun, isAvailable as DSIsAvailable} from '#modules/diskspace';
 import {tmpdir} from 'node:os';
 
 
