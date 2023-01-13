@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import {Command} from 'commander';
-import {DotEnv} from '@momsfriendlydevco/dotenv';
 import {MOM} from '#lib/MOM';
 import timestring from 'timestring';
 
@@ -36,7 +35,6 @@ export function command() {
 		.option('-l, --loop [times]', 'Repeat output the specifed number of times. Use "0" for forever', 1)
 		.option('-p, --loop-pause [timestring]', 'Wait for a timestring-compatible delay between each loop. Use "0" to disable', '10s')
 		.option('-v, --verbose', 'Be more verbose')
-		.option('--env <path>', 'Specify alternate .env file to use for config, set `--env=none` to disable completely')
 		.option('--no-headers', 'Disable header seperators if multiple reporters return content')
 		.action(commandRun)
 }
@@ -44,81 +42,25 @@ export function command() {
 export function commandRun(opts) {
 	let mom = new MOM();
 
-	if (opts.env) mom.debug('Using .env override path', opts.env);
-
-	// Load Modules {{{
-	if (opts.env !== 'none' && opts.module.length == 0) {
-		// Load modules from .env* files {{{
-		mom.debug('Loading modules from .env');
-		let config = new DotEnv()
-			.parse(opts.env || [
-				'.env.example',
-				'.env',
-			])
-			.template()
-			.schemaGlob(/\.ENABLED$/, Boolean) // Type cast all *_ENABLE values
-			.filterAndTrim(/^MOM_MODULE_/)
-			.toTree(/\./)
-			.deep()
-			.camelCase()
-			.value();
-
-		if (opts.verbose) console.warn('Load module config', config);
-
-		Object.entries(config)
-			.filter(([module, config]) => module && config.enabled)
-			.forEach(([module, config]) => {
-				if (opts.verbose) console.warn(`Load MODULE:${module} config:`, config);
-				mom.use(module, config)
-			})
-		// }}}
-	} else if (opts.module.length > 0) {
-		// Load modules from CLI {{{
-		mom.debug('Loading modules from CLI only');
+	// Load Modules from the CLI - or use global config {{{
+	if (opts.module.length > 0) {
+		mom.debug('Loading modules from CLI');
 		opts.module.forEach(({module, args}) =>
 			mom.use(module, args)
 		);
-		// }}}
 	} else {
-		throw new Error('Specify modules to load with `--module MOD` or create a .env file');
+		mom.loadFromConfig({modules: true, reporters: false});
 	}
 	// }}}
 
-	// Load Reporters {{{
-	if (opts.env !== 'none' && opts.reporter.length == 0) {
-		// Load reporters from .env* files {{{
-		mom.debug('Loading reporters from .env');
-		let config = new DotEnv()
-			.parse(opts.env || [
-				'.env.example',
-				'.env',
-			])
-			.template()
-			.schemaGlob(/\.ENABLED$/, Boolean) // Type cast all *_ENABLE values
-			.filterAndTrim(/^MOM_REPORTER_/)
-			.toTree(/\./)
-			.deep()
-			.camelCase()
-			.value();
-
-		if (opts.verbose) console.warn('Load reporter config', config);
-
-		Object.entries(config)
-			.filter(([reporter, config]) => reporter && config.enabled)
-			.forEach(([reporter, config]) => {
-				if (opts.verbose) console.warn(`Load REPORTER:${reporter} config:`, config);
-				mom.reporter(reporter, config)
-			})
-		// }}}
-	} else if (opts.reporter.length > 0) {
-		// Load reporters from CLI {{{
+	// Load Reporters from the CLI - or use global config {{{
+	if (opts.reporter.length > 0) {
 		mom.debug('Loading reporters from CLI only');
 		opts.reporter.forEach(({reporter, args}) =>
 			mom.reporter(reporter, args)
 		);
-		// }}}
 	} else {
-		throw new Error('Specify reporters to load with `--reporter REPORTER` or create an .env file');
+		mom.loadFromConfig({modules: false, reporters: true});
 	}
 	// }}}
 
