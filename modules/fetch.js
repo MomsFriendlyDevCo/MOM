@@ -13,8 +13,8 @@ export function config({Schema}) {
 		checkSsl: {type: Boolean, default: true},
 		warnSslRemaming: {type: 'duration', default: '14d'},
 		critSslRemaming: {type: 'duration', default: '3d'},
-		keyword: {type: RegExp, required: false},
-		keywordNegative: {type: RegExp, required: false},
+		keyword: {type: RegExp, acceptPlain: true, required: false},
+		keywordNegative: {type: RegExp, acceptPlain: true, required: false},
 	});
 }
 
