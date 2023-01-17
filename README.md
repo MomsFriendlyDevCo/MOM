@@ -2,12 +2,63 @@ MOM (Matt's Obsessive Monitor)
 ==============================
 
 
+Quick Start
+===========
+MOM needs to be cloned + configured + run to work.
+Below is the standard setup process to do this on a regular Node-ready server.
+
+
+1. Install MOM in a local directory:
+
+```shell
+cd ~
+git clone git@github.com:MomsFriendlyDevCo/MOM.git
+cd MOM
+```
+
+2. Copy the example `.env` file and edit it for what you need:
+
+```shell
+cp .env.example .env
+```
+
+Now edit `.env`, enabling any of the monitors you want MOM to report on.
+
+```shell
+$EDITOR .env
+```
+
+
+3. Test MOM by running one monitor cycle
+
+```shell
+./mom.js run
+```
+
+
+4. Install MOM as a service (PM2)
+
+```shell
+# (OPTIONAL) Install PM2 if its not already on your server
+sudo npm -g install pm2
+
+# Install MOM as a PM2 process
+./mom.js pm2-install
+
+# Save the PM2 state
+pm2 save
+
+# Set PM2 to run at startup
+pm2 startup
+```
+
+
 Modules / Reporters
 ===================
-Modules are the main data snapshotting libraries of MOM.
-Reporters are data output formatters.
+**Modules** are the main data snapshotting libraries of MOM.
+**Reporters** are data output formatters.
 
-The internals of each are pretty simple JavaScript ES6 modules:
+The internals of each are pretty simple JavaScript ES6 modules export:
 
 ```javascript
 export function config({Schema}) {
@@ -41,6 +92,26 @@ The following exportables are supported:
 | `init()`     | `Function` | Setup function which is run once on initalization                              |
 | `shutdown()` | `Function` | Teardown function which is run on shutdown to clean up any remaining resources |
 | `run()`      | `Function` | Main worker function which is executed each snapshot step                      |
+
+
+For each the calling context is a [MOMInjector](./lib/MOMInjector.js) which can also be spread into the functions function. For example to make use of the `options` + `state` objects:
+
+```javascript
+export function init({options}) {
+    // options + state is now available locally
+}
+```
+
+The context / function arguments is composed of:
+
+| Name        | Type                | Description                                                                                                                          |
+|-------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `mom`       | `MOM`               | The main `MOM` instance                                                                                                              |
+| `options`   | `Object`            | The [@MomsFriendlyDevCo/DotEnv](https://github.com/MomsFriendlyDevCo/dotenv) exported options object, based on the `schema` function |
+| `state`     | `Object`            | An object which can store instance specific data such as database connection handles etc.                                            |
+| `responses` | `MOMModuleResponse` | The last response the module provided                                                                                                |
+| `metrics`   | `Array<Object>`     | The last responses metric breakdown                                                                                                  |
+| `Schema`    | `DotEnvSchema`      | Convenience export for DotEnv's schema object to be used in `config()` exports                                                       |
 
 
 
@@ -146,6 +217,8 @@ TODO
 * [x] General: "OK", "WARN", "CRIT", "ERROR" progression
 * [ ] General: Unify Module + Reporter NPMness
 * [ ] General: Support for externally installed NPMs
+* [ ] General: Other startup installs: Forever
+* [ ] General: Other startup installs: SystemD
 * [x] Module: Bandwidth
 * [x] Module: Disk Space
 * [x] Module: Disk Space (OS Temporary dir)
