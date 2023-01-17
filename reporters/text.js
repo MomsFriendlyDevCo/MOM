@@ -13,7 +13,8 @@ export function config({Schema}) {
 		styleStatusWarn: {type: 'style', default: 'fgBlack bgYellow'},
 		styleStatusCrit: {type: 'style', default: 'bold fgWhite bgYellow'},
 		styleStatusError: {type: 'style', default: 'bold fgWhite bgRed'},
-		metrics: {type: 'boolean', default: false},
+		styleMetricBranch: {type: 'style', default: 'gray'},
+		metrics: {type: 'boolean', default: true},
 	});
 }
 
@@ -27,7 +28,13 @@ export function run({options, responses}) {
 	let formatMetrics = module => {
 		if (!options.metrics) return ''; // Metric display is disabled
 		return module.metrics
-			.map(metric => ' - ' + styleMetric(metric, options))
+			.map((metric, metricIndex, metrics) =>
+				(metricIndex == 0 ? '\n' : '')
+				+ ' '
+				+ options.styleMetricBranch(metricIndex == metrics.length - 1 ? '└' : '├')
+				+ ' '
+				+ styleMetric(metric, options)
+			)
 			.join('\n')
 	};
 
