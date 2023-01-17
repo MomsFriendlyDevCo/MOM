@@ -1,7 +1,7 @@
 {
   "name": "@momsfriendlydevco/mom",
   "version": "1.0.0",
-  "description": "Matt's Obsessive Monitor (MOM) - extendible server monitoring and sanity checking",
+  "description": "Matt's Obsessive Monitor (MOM) - extensible server monitoring and sanity checking",
   "scripts": {
     "lint": "eslint lib modules reporters",
     "test": "mocha"
