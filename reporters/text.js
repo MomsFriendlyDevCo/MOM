@@ -1,7 +1,11 @@
+import {styleMetric} from './metrics.js';
+
 export function config({Schema}) {
 	return new Schema({
 		header: {type: 'string', default: ''},
 		footer: {type: 'string', default: ''},
+		moduleSpacingBefore: {type: 'number', default: 0, help: 'Number of blank lines before each module listing'},
+		moduleSpacingAfter: {type: 'number', default: 1, help: 'Number of blank lines after each module'},
 		styleSummaryOk: {type: 'style', default: 'bold fgBlack bgGreen'},
 		styleSummaryFail: {type: 'style', default: 'bold fgWhite bgRed'},
 		styleModule: {type: 'style', default: 'fgBlack bgWhite'},
@@ -9,6 +13,7 @@ export function config({Schema}) {
 		styleStatusWarn: {type: 'style', default: 'fgBlack bgYellow'},
 		styleStatusCrit: {type: 'style', default: 'bold fgWhite bgYellow'},
 		styleStatusError: {type: 'style', default: 'bold fgWhite bgRed'},
+		metrics: {type: 'boolean', default: false},
 	});
 }
 
@@ -17,7 +22,14 @@ export function run({options, responses}) {
 		status == 'OK' ? options.styleStatusOk(status)
 		: status == 'WARN' ? options.styleStatusWarn(status)
 		: status == 'CRIT' ? options.styleStatusCrit(status)
-		: options.styleStatusError(status)
+		: options.styleStatusError(status);
+
+	let formatMetrics = module => {
+		if (!options.metrics) return ''; // Metric display is disabled
+		return module.metrics
+			.map(metric => ' - ' + styleMetric(metric, options))
+			.join('\n')
+	};
 
 	let {fails, success} = responses.reduce((t, v) => {
 		if (['CRIT', 'ERROR'].includes(v.status)) {
@@ -34,7 +46,12 @@ export function run({options, responses}) {
 			: options.styleSummaryOk('MOM:OK'),
 		...options.header,
 		'',
-		...fails.map(m => `${formatStatus(m.status)}: ${options.styleModule(m.id)}: ${m.message}`),
+		...fails.map(m =>
+			'\n'.repeat(options.moduleSpacingBefore)
+			+ `${formatStatus(m.status)}: ${options.styleModule(m.id)}: ${m.message}`
+			+ formatMetrics(m)
+			+ '\n'.repeat(options.moduleSpacingAfter)
+		),
 		...(fails.length > 0 && success.length > 0 // Do we have BOTH fails + successes? If so apply a padding bar
 			? [
 				'',
@@ -42,7 +59,12 @@ export function run({options, responses}) {
 				'',
 			] : []
 		),
-		...success.map(m => `${formatStatus(m.status)}: ${options.styleModule(m.id)}: ${m.message}`),
+		...success.map(m =>
+			'\n'.repeat(options.moduleSpacingBefore)
+			+ `${formatStatus(m.status)}: ${options.styleModule(m.id)}: ${m.message}`
+			+ formatMetrics(m)
+			+ '\n'.repeat(options.moduleSpacingAfter)
+		),
 		success.length > 0 ? '' : false,
 		fails.length == 0 && success.length > 1 ? `All ${success.length} tests passing`
 			: fails.length > 0 && success.length > 0 ? `${fails.length} tests failing, ${success.length} succeeding out of ${responses.length} ~ ${Math.round((success.length / responses.length) * 100)}%`
