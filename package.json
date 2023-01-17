@@ -16,7 +16,9 @@
     "sanity"
   ],
   "imports": {
-    "#lib/*": "./lib/*.js"
+    "#lib/*": "./lib/*.js",
+    "#modules/*": "./modules/*.js",
+    "#reporters/*": "./reporters/*.js"
   },
   "exports": {
     ".": "./lib/MOM.js",

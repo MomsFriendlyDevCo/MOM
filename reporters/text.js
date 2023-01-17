@@ -1,4 +1,4 @@
-import {styleMetric} from './metrics.js';
+import {styleMetric} from '#reporters/metrics';
 
 export function config({Schema}) {
 	return new Schema({
