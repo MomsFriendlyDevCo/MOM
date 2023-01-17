@@ -24,19 +24,18 @@ export function run({state}) {
 			{
 				id: `${iF.iface}.readSec`,
 				unit: 'bytes',
-				value: metricTools.snapshotSinceLast(`${iF.iface}.readSec`, iF.rx_bytes),
+				value: metricTools.snapshotSinceLast(`${iF.iface}.readSec`, iF.rx_bytes) || 0,
 			},
 			{
 				id: `${iF.iface}.writeSec`,
 				unit: 'bytes',
-				value: metricTools.snapshotSinceLast(`${iF.iface}.writeSec`, iF.tx_bytes),
+				value: metricTools.snapshotSinceLast(`${iF.iface}.writeSec`, iF.tx_bytes) || 0,
 			},
 		]))
 		.then(metrics => promiseTools.deepResolve(metrics))
-		.then(metrics => metrics.filter(m => m.value !== null)) // Remove metrics we dont have enough data for
 		.then(metrics => ({
 			status: 'OK', // FIXME
-			message: 'Network interface monitoring',
+			message: 'Network interface monitoring' + (metrics.every(m => !m.value) ? ' - need more data for sampling' : ''),
 			metrics,
 		}))
 }

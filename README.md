@@ -145,7 +145,7 @@ TODO
 * [ ] General: "Module" terminology
 * [ ] General: Unify Module + Reporter NPMness
 * [ ] General: Support for externally installed NPMs
-* [ ] Module: Bandwidth
+* [x] Module: Bandwidth
 * [x] Module: Disk Space
 * [x] Module: Disk Space (OS Temporary dir)
 * [ ] Module: Docker
