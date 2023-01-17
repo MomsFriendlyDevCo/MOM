@@ -97,7 +97,7 @@ The following exportables are supported:
 For each the calling context is a [MOMInjector](./lib/MOMInjector.js) which can also be spread into the functions function. For example to make use of the `options` + `state` objects:
 
 ```javascript
-export function init({options}) {
+export function init({options, state}) {
     // options + state is now available locally
 }
 ```
@@ -121,7 +121,7 @@ MOM provides various utilities to make tracking metrics easier.
 All of these are opt-in ES6 modules which should be imported. They also export a default object with all functionality as an object.
 
 ```javascript
-import metricTools from '@momsfriendlydevco/mom';
+import metricTools from '@momsfriendlydevco/mom/metricTools';
 metricTools.snapshotSinceLast(...); // Access via exported object
 ```
 
