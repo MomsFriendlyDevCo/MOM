@@ -61,11 +61,11 @@ export function run({options}) {
 				status:
 					options.critRestarts && maxRestarts >= options.critRestarts ? 'CRIT'
 					: options.warnRestarts && maxRestarts >= options.warnRestarts ? 'WARN'
-					: 'OK',
+					: 'PASS',
 				message:
 					options.critRestarts && maxRestarts >= options.critRestarts ? 'PM2 restarts above critical threshold'
 					: options.warnRestarts && maxRestarts >= options.warnRestarts ? 'PM2 restarts above warning threshold'
-					: 'OK',
+					: 'PM2 restarts at normal levels',
 				metrics,
 			};
 		})

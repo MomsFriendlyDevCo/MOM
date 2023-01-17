@@ -34,7 +34,7 @@ export function run({state}) {
 		]))
 		.then(metrics => promiseTools.deepResolve(metrics))
 		.then(metrics => ({
-			status: 'OK', // FIXME
+			status: 'PASS', // FIXME
 			message: 'Network interface monitoring' + (metrics.every(m => !m.value) ? ' - need more data for sampling' : ''),
 			metrics,
 		}))

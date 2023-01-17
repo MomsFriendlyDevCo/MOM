@@ -7,7 +7,7 @@ describe('Module: Dummy', ()=> {
 		this.timeout(30 * 1000);
 
 		return new MOM()
-			.use('dummy', {status: 'OK'})
+			.use('dummy', {status: 'PASS'})
 			.reporter('raw')
 			.runAll()
 			.then(res => {
@@ -22,7 +22,7 @@ describe('Module: Dummy', ()=> {
 				expect(res.date).to.be.an.instanceOf(Date);
 
 				expect(res).to.have.property('status');
-				expect(res.status).to.be.equal('OK')
+				expect(res.status).to.be.equal('PASS')
 
 				expect(res).to.have.property('message');
 				expect(res.message).to.be.a('string');

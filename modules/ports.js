@@ -122,7 +122,7 @@ export function run({options, mom}) {
 			status: groups.fail.length > 0 ? options.failStatus
 				: groups.tout.length > 0 ? options.timeoutStatus
 				: groups.ivld.length > 0 ? options.invalidStatus
-				: 'OK',
+				: 'PASS',
 			message:
 				groups.fail.length > 0 || groups.tout.length > 0
 					? format([ // At least one port failed / timed out

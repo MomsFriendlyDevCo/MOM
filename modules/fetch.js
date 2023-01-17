@@ -57,7 +57,7 @@ export function run({options}) {
 					: options.checkSsl && sslRemaining < options.warnSslRemaming ? 'WARN'
 					: options.keyword && !options.keyword.test(response.data) ? 'CRIT'
 					: options.keywordNegative && !options.keywordNegative.test(response.data) ? 'CRIT'
-					: 'OK',
+					: 'PASS',
 				message: [
 					`Fetched in ${relativeTime(startTime)}`,
 					options.keyword && options.keyword.test(response.data) ?  'Keyword found!' : false,

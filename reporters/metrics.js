@@ -8,7 +8,7 @@ export function config() {
 		stylePrefix: {type: 'style', default: 'bold fgWhite bgBlue'},
 		styleModule: {type: 'style', default: 'bold fgBlue'},
 		styleMetric: {type: 'style', default: 'fgBlue'},
-		styleValueOk: {type: 'style', default: 'fgWhite'},
+		styleValuePass: {type: 'style', default: 'fgWhite'},
 		styleValueWarn: {type: 'style', default: 'fgYellow'},
 		styleValueCrit: {type: 'style', default: 'fgRed'},
 		styleValueMax: {type: 'style', default: 'underline fgWhite'},
@@ -42,7 +42,7 @@ export function styleMetric(metric, options) {
 		settings[
 			metric.status == 'CRIT' ? 'styleValueCrit'
 			: metric.status == 'WARN' ? 'styleValueWarn'
-			: 'styleValueOk'
+			: 'styleValuePass'
 		](
 			settings.human ? metric.valueFormatted : metric.value,
 		),

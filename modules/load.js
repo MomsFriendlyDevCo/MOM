@@ -26,7 +26,7 @@ export function run({options}) {
 				/^(?<proc1>[\d\.]+)\s+(?<proc5>[\d\.]+)\s+(?<proc15>[\d\.]+)\s+(?<threadsRunning>\d+)\/(?<threadsTotal>\d+)/.exec(content)?.groups || {}; // eslint-disable-line
 
 			return {
-				status: 'OK',
+				status: 'PASS',
 				message: `System load: ${proc1} ${proc5} ${proc15} ${threadsRunning}/${threadsTotal}`,
 				metrics: [
 					{

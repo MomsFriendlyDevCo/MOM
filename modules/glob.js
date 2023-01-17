@@ -24,7 +24,7 @@ export function run({options}) {
 			status:
 				results.length < options.critNumber ? 'CRIT'
 				: results.length < options.warnNumber ? 'WARN'
-				: 'OK',
+				: 'PASS',
 			message: `Found ${results.length} matches`,
 			description: Array.isArray(options.glob)
 				? 'File count with globs ' + options.glob.map(g => `"${g}"`).join(', ')

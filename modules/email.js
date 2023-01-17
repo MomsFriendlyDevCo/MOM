@@ -42,7 +42,7 @@ export function run({options, state}) {
 			console.log('RAW EMAIL RES', res);
 
 			return ({
-				status: 'OK',
+				status: 'PASS',
 				message: `Dispatched email in ${relativeTime(startTime)}`,
 				description: `Dispatch email to ${options.to}`,
 				metric: {

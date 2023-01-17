@@ -20,7 +20,7 @@ describe('Module: DiskSpaceTemp', ()=> {
 				expect(res.date).to.be.an.instanceOf(Date);
 
 				expect(res).to.have.property('status');
-				expect(res.status).to.be.oneOf(['OK', 'WARN', 'CRIT', 'ERROR']);
+				expect(res.status).to.be.oneOf(['PASS', 'WARN', 'CRIT', 'ERROR']);
 
 				expect(res).to.have.property('message');
 				expect(res.message).to.be.a('string');

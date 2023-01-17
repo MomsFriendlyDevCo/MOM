@@ -31,7 +31,7 @@ export function run({options}) {
 				!res.alive ? 'CRIT'
 				: res.avg > options.critTimeout ? 'CRIT'
 				: res.avg > options.warnTimeout ? 'WARN'
-				: 'OK';
+				: 'PASS';
 
 			return {
 				status,

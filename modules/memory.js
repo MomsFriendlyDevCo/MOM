@@ -50,7 +50,7 @@ export function run({options}) {
 					let status =
 						options[`${field.prefix}CritPercent`] && percentFree >= options[`${field.prefix}CritPercent`] ? 'CRIT'
 						: options[`${field.prefix}WarnPercent`] && percentFree >= options[`${field.prefix}WarnPercent`] ? 'WARN'
-						: 'OK';
+						: 'PASS';
 
 					return {
 						status,
@@ -71,7 +71,7 @@ export function run({options}) {
 			status:
 				stats.some(m => m.status == 'CRIT') ? 'CRIT'
 				: stats.some(m => m.status == 'WARN') ? 'WARN'
-				: 'OK',
+				: 'PASS',
 			message: stats.map(m =>
 				`${m.field.title}: ${bytes(m.metric.value)} / ${bytes(m.metric.valueMax)} ~ ${m.percent}%`,
 			).join(', '),

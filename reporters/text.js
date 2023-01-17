@@ -6,13 +6,13 @@ export function config({Schema}) {
 		footer: {type: 'string', default: ''},
 		moduleSpacingBefore: {type: 'number', default: 0, help: 'Number of blank lines before each module listing'},
 		moduleSpacingAfter: {type: 'number', default: 1, help: 'Number of blank lines after each module'},
-		styleSummaryOk: {type: 'style', default: 'bold fgBlack bgGreen'},
+		styleSummaryPass: {type: 'style', default: 'bold fgBlack bgGreen'},
 		styleSummaryFail: {type: 'style', default: 'bold fgWhite bgRed'},
 		styleModule: {type: 'style', default: 'fgBlack bgWhite'},
-		styleStatusOk: {type: 'style', default: 'fgBlack bgGreen'},
-		styleStatusWarn: {type: 'style', default: 'fgBlack bgYellow'},
+		styleStatusPass: {type: 'style', default: 'fgBlack bgGreen'},
+		styleStatusWarn: {type: 'style', default: 'bold fgBlack bgYellow'},
 		styleStatusCrit: {type: 'style', default: 'bold fgWhite bgRed'},
-		styleStatusError: {type: 'style', default: 'bold fgWhite bgRed'},
+		styleStatusError: {type: 'style', default: 'bold fgWhite bgMagenta'},
 		styleMetricBranch: {type: 'style', default: 'gray'},
 		metrics: {type: 'boolean', default: true},
 	});
@@ -20,7 +20,7 @@ export function config({Schema}) {
 
 export function run({options, responses}) {
 	let formatStatus = status =>
-		status == 'OK' ? options.styleStatusOk(status)
+		status == 'PASS' ? options.styleStatusPass(status)
 		: status == 'WARN' ? options.styleStatusWarn(status)
 		: status == 'CRIT' ? options.styleStatusCrit(status)
 		: options.styleStatusError(status);
@@ -50,7 +50,7 @@ export function run({options, responses}) {
 	return [
 		fails.length > 0
 			? options.styleSummaryFail('MOM:FAIL')
-			: options.styleSummaryOk('MOM:OK'),
+			: options.styleSummaryPass('MOM:PASS'),
 		...options.header,
 		'',
 		...fails.map(m =>

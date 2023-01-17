@@ -51,12 +51,12 @@ export function run({options}) {
 		.then(data => {
 			let status = data.freePercent < options.critPercent ? 'CRIT'
 				: data.freePercent < options.warnPercent ? 'WARN'
-				: 'OK';
+				: 'PASS';
 
 			return {
 				status,
 				message:
-					status == 'OK'
+					status == 'PASS'
 					? `${bytes(data.used) || '0b'} / ${bytes(data.size)} @ ${data.freePercent}% free for ${options.mountAlias || data.mount} mount point`
 					: `Only ${bytes(data.avail) || '0b'} ~ ${data.freePercent}% disk remaining - ${bytes(data.used)} / ${bytes(data.size)} @ ${data.usePercent}% used for ${options.mountAlias || data.mount} mount point`,
 				description: `Disk usage at ${options.mountAlias || data.mount}`,

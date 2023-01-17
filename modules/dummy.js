@@ -1,6 +1,6 @@
 export function config({Schema}) {
 	return new Schema({
-		status: {type: String, default: 'OK', enum: ['OK', 'WARN', 'CRIT', 'ERROR']},
+		status: {type: String, default: 'PASS', enum: ['PASS', 'WARN', 'CRIT', 'ERROR']},
 		message: {type: String, default: 'Test message'},
 		times: {type: Number, default: 1},
 	});
@@ -10,7 +10,7 @@ export function config({Schema}) {
 /**
 * Dummy test which returns the status / response requested
 * @param {Object} options The options to mutate behaviour
-* @param {String} [options.status='OK'] Status to return
+* @param {String} [options.status='PASS'] Status to return
 * @param {String} [options.message='Test message'] Message to return
 * @param {Number} [options.times=1] How many responses to return to simulate a combined MOM response
 * @returns {MOMModuleResponse}

@@ -143,6 +143,7 @@ TODO
 
 * [ ] General: Naming + NPM namespace
 * [ ] General: "Module" terminology
+* [x] General: "OK", "WARN", "CRIT", "ERROR" progression
 * [ ] General: Unify Module + Reporter NPMness
 * [ ] General: Support for externally installed NPMs
 * [x] Module: Bandwidth

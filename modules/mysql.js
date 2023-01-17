@@ -65,7 +65,7 @@ export function run({options, state}) {
 		.then(stats => ({
 			status:
 				stats.some(s => s.result === false) ? 'CRIT'
-				: 'OK',
+				: 'PASS',
 			message: `Check ${Object.keys(options.tables).length} tables`,
 			metrics: stats.flatMap(s => s.metric),
 		}))

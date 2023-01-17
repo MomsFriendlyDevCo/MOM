@@ -11,7 +11,7 @@ export function config({Schema}) {
 		subject: {type: String, default: 'MOM report email'},
 		reporter: {type: String, required: true, enum: ['text'], default: 'text', help: 'Reporter to use for main email body - must be enabled'},
 		reporterAttach: {type: Object, required: false, default: '', help: 'Other reporter content to attach in the form: `reporter:FILENAME.EXT` omit filename to guess', noValue: null},
-		statuses: {type: Set, enum: ['OK', 'WARN', 'CRIT', 'ERROR'], default: 'WARN,CRIT,ERROR', help: 'Which statuses to send emails on'},
+		statuses: {type: Set, enum: ['PASS', 'WARN', 'CRIT', 'ERROR'], default: 'WARN,CRIT,ERROR', help: 'Which statuses to send emails on'},
 		throttle: {type: 'duration', required: false, default: '0ms', help: 'How often to allow emails to be sent'},
 	})
 }
