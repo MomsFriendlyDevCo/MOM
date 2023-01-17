@@ -13,7 +13,7 @@ export function config({Schema}) {
 		styleStatusWarn: {type: 'style', default: 'bold fgBlack bgYellow'},
 		styleStatusCrit: {type: 'style', default: 'bold fgWhite bgRed'},
 		styleStatusError: {type: 'style', default: 'bold fgWhite bgMagenta'},
-		styleMetricBranch: {type: 'style', default: 'gray'},
+		styleMetricBranch: {type: 'style', default: 'fgBlue'},
 		metrics: {type: 'boolean', default: true},
 	});
 }
