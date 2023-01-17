@@ -11,7 +11,7 @@ export function config({Schema}) {
 		styleModule: {type: 'style', default: 'fgBlack bgWhite'},
 		styleStatusOk: {type: 'style', default: 'fgBlack bgGreen'},
 		styleStatusWarn: {type: 'style', default: 'fgBlack bgYellow'},
-		styleStatusCrit: {type: 'style', default: 'bold fgWhite bgYellow'},
+		styleStatusCrit: {type: 'style', default: 'bold fgWhite bgRed'},
 		styleStatusError: {type: 'style', default: 'bold fgWhite bgRed'},
 		styleMetricBranch: {type: 'style', default: 'gray'},
 		metrics: {type: 'boolean', default: true},
