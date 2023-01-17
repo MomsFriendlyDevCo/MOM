@@ -157,7 +157,7 @@ TODO
 * [x] Module: Mongo
 * [ ] Module: MySQL
 * [x] Module: Ping
-* [ ] Module: PM2 process monitoring
+* [x] Module: PM2 process monitoring
 * [x] Module: Ports
 * [ ] Module: Script runner
 * [x] Reporter: Email
