@@ -27,7 +27,7 @@ export function isAvailable() {
 * @param {String} [options.mountAlias] Override string when displaying the mount path
 * @param {Number} [options.warnPercent=20] Percentage under which the status should WARN
 * @param {Number} [options.critPercent=10] Percentage under which the status should CRIT
-* @returns {MOMModuleResponse}
+* @returns {MOMResponse}
 */
 export function run({options}) {
 	if (!options.mountAlias) options.mountAlias = options.path;

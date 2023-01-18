@@ -13,7 +13,7 @@ export function config({Schema}) {
 * @param {String} [options.status='PASS'] Status to return
 * @param {String} [options.message='Test message'] Message to return
 * @param {Number} [options.times=1] How many responses to return to simulate a combined MOM response
-* @returns {MOMModuleResponse}
+* @returns {MOMResponse}
 */
 export function run({options}) {
 	let settings = {

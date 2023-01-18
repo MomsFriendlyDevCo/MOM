@@ -3,7 +3,7 @@ import {MOM} from '#lib/MOM';
 
 describe('Module: Dummy', ()=> {
 
-	it('should return a MOMModuleResponse', function() {
+	it('should return a MOMResponse', function() {
 		this.timeout(30 * 1000);
 
 		return new MOM()

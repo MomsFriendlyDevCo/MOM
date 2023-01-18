@@ -109,7 +109,7 @@ The context / function arguments is composed of:
 | `mom`       | `MOM`               | The main `MOM` instance                                                                                                              |
 | `options`   | `Object`            | The [@MomsFriendlyDevCo/DotEnv](https://github.com/MomsFriendlyDevCo/dotenv) exported options object, based on the `schema` function |
 | `state`     | `Object`            | An object which can store instance specific data such as database connection handles etc.                                            |
-| `responses` | `MOMModuleResponse` | The last response the module provided                                                                                                |
+| `responses` | `MOMResponse` | The last response the module provided                                                                                                |
 | `metrics`   | `Array<Object>`     | The last responses metric breakdown                                                                                                  |
 | `Schema`    | `DotEnvSchema`      | Convenience export for DotEnv's schema object to be used in `config()` exports                                                       |
 

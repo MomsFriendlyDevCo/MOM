@@ -4,7 +4,7 @@ import {MOM} from '#lib/MOM';
 
 describe('Module: DiskSpace', ()=> {
 
-	it('should return a MOMModuleResponse', ()=>
+	it('should return a MOMResponse', ()=>
 		new MOM()
 			.use('diskSpace', {path: dirName()})
 			.reporter('raw')

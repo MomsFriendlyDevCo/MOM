@@ -3,7 +3,7 @@ import {MOM} from '#lib/MOM';
 
 describe('Module: DiskSpaceTemp', ()=> {
 
-	it('should return a MOMModuleResponse', ()=>
+	it('should return a MOMResponse', ()=>
 		new MOM()
 			.use('diskSpaceTemp')
 			.reporter('raw')

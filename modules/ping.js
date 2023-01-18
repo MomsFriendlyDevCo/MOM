@@ -19,7 +19,7 @@ export function config({Schema}) {
 * @param {Number} [options.repeat=3] Number of pings to send
 * @param {Number} [options.warnTimeout=100] Timeout in milliseconds after which WARN will occur
 * @param {Number} [options.critTimeout=500] Timeout in milliseconds after which CRIT will occur
-* @returns {MOMModuleResponse}
+* @returns {MOMResponse}
 */
 export function run({options}) {
 	return ping.promise.probe(options.host, {

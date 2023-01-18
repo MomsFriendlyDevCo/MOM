@@ -4,7 +4,7 @@ import {MOM} from '#lib/MOM';
 
 describe('Module: Glob', ()=> {
 
-	it('should return a MOMModuleResponse', ()=>
+	it('should return a MOMResponse', ()=>
 		new MOM()
 			.use('glob', {glob: `${dirName()}/*.js`})
 			.reporter('raw')
