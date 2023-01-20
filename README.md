@@ -157,6 +157,54 @@ Various output utility functions - usually using the global config object for co
 Pretty print a JSON object with global config
 
 
+@momsfriendlydevco/mom/MOMResponse
+----------------------------------
+Generic class and static functions for handling responses from Modules.
+
+### MOMResponse.joiValidator
+JOI validation object to validate an incomming MOMResponse POJO.
+
+### MOMResponse.validate(response)
+Utility function to run the JOI validator on a POJO.
+
+### MOMResponse.fromMetrics(metrics)
+Create an outer MOMResponse object from the inner metrics. This function uses the status of each metric to determine the outer status of the MOMResponse.
+
+
+@momsfriendlydevco/mom/MOMResponseMetric
+----------------------------------------
+Generic class and static functions for handling individual metrics within a MOMResponse.
+
+### MOMResponseMetric.joiValidator
+JOI validation object to validate an incomming MOMResponseMetric POJO.
+
+### MOMResponseMetric.validate(response)
+Utility function to run the JOI validator on a POJO.
+
+### MOMResponseMetric.decorate(metric)
+Decorate additional utility properties to a Metric-like object.
+
+### MOMResponseMetric.evalExpression(value, expr, max)
+Evaluate an expression (such as `MOMResponseMetric{}.warnValue`) against the metric value (+ optional max) and determine if it matches.
+
+### MOMResponseMetric.statuses
+Array collection of all statuses supported by MOM.
+
+### MOMResponseMetric.statusTextToIndex
+Object lookup of status text (e.g. 'CRIT') to the status entry within `statusUtils.statuses`
+
+### MOMResponseMetric.maxStatus(arr)
+Find the most critical status in an array of status strings.
+
+### MOMResponseMetric.metricValueMatches(value, expression)
+FIXME: Redundent?
+
+### MOMResponseMetric.statusFromMetric(metric)
+Return the status ID (e.g. `"PASS"`) from the metric by examining its criteria.
+
+
+
+
 @momsfriendlydevco/mom/metricTools
 ----------------------------------
 Various tools to make handling metrics a little easier.
@@ -173,20 +221,6 @@ Various promise handling utilities.
 
 ### promiseUtils.deepResolve(obj)
 Traverse an array / object and resolve all promises into a flat object / array.
-
-
-@momsfriendlydevco/mom/statusUtils
------------------------------------
-Various status handling utilities.
-
-### statusUtils.statuses
-Array collection of all statuses supported by MOM.
-
-### statusUtils.statusTextToIndex
-Object lookup of status text (e.g. 'CRIT') to the status entry within `statusUtils.statuses`
-
-### statusUtils.maxStatus(arr)
-Find the most critical status in an array of status strings.
 
 
 @momsfriendlydevco/mom/throttle

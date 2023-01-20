@@ -1,4 +1,5 @@
 import metricTools from '#lib/metricTools';
+import MOMResponse from '#lib/MOMResponse';
 import promiseTools from '#lib/promiseTools';
 import systemInfo from 'systeminformation';
 
@@ -24,18 +25,15 @@ export function run({state}) {
 			{
 				id: `${iF.iface}.readSec`,
 				unit: 'bytes',
-				value: metricTools.snapshotSinceLast(`${iF.iface}.readSec`, iF.rx_bytes) || 0,
+				value: metricTools.snapshotSinceLast(`${iF.iface}.readSec`, iF.rx_bytes),
 			},
 			{
 				id: `${iF.iface}.writeSec`,
 				unit: 'bytes',
-				value: metricTools.snapshotSinceLast(`${iF.iface}.writeSec`, iF.tx_bytes) || 0,
+				value: metricTools.snapshotSinceLast(`${iF.iface}.writeSec`, iF.tx_bytes),
 			},
 		]))
 		.then(metrics => promiseTools.deepResolve(metrics))
-		.then(metrics => ({
-			status: 'PASS', // FIXME
-			message: 'Network interface monitoring' + (metrics.every(m => !m.value) ? ' - need more data for sampling' : ''),
-			metrics,
-		}))
+		.then(metrics => metrics.filter(m => m.value !== null)) // Remove metrics we dont have enough data for
+		.then(metrics => MOMResponse.fromMetrics(metrics))
 }
