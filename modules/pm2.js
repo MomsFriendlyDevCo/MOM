@@ -1,4 +1,5 @@
 import {execa} from 'execa';
+import MOMResponse from '#lib/MOMResponse';
 import pm2 from 'pm2';
 
 export function config({Schema}) {
@@ -24,7 +25,7 @@ export function init({mom}) {
 		.then(()=> mom.debug('PM2 connecteed'))
 }
 
-export function run({options}) {
+export function run() {
 	return Promise.resolve()
 		.then(()=> new Promise((resolve, reject) =>
 			pm2.list((e, r) => e ? reject(e) : resolve(r))
@@ -49,24 +50,9 @@ export function run({options}) {
 				description: `Process restarts of "${proc.name}"`,
 			},
 		]))
-		.then(metrics => metrics.flat())
-		.then(metrics => {
-			let maxRestarts = Math.max(
-				...metrics
-					.filter(m => m.id.endsWith('.restarts'))
-					.map(m => m.value)
-			);
-
-			return {
-				status:
-					options.critRestarts && maxRestarts >= options.critRestarts ? 'CRIT'
-					: options.warnRestarts && maxRestarts >= options.warnRestarts ? 'WARN'
-					: 'PASS',
-				message:
-					options.critRestarts && maxRestarts >= options.critRestarts ? 'PM2 restarts above critical threshold'
-					: options.warnRestarts && maxRestarts >= options.warnRestarts ? 'PM2 restarts above warning threshold'
-					: 'PM2 restarts at normal levels',
-				metrics,
-			};
-		})
+		.then(metrics => MOMResponse.fromMetrics(metrics.flat(), {
+			pass: {
+				message: 'PM2 process monitoring',
+			},
+		}))
 }
