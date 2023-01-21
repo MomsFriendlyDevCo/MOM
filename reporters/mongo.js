@@ -72,10 +72,10 @@ export function convertMetricToMongoDoc(responseDoc, metric) {
 		ref: metric.id,
 		response: responseDoc._id,
 		unit: metric.unit,
-		value: metric.value,
-		warnValue: metric.warnValue,
-		critValue: metric.critValue,
-		description: metric.description,
+		value: +metric.value,
+		warnValue: metric.warnValue || undefined,
+		critValue: metric.critValue || undefined,
+		description: metric.description || undefined,
 	};
 }
 

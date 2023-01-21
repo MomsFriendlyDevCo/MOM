@@ -6,6 +6,7 @@ export function config({Schema}) {
 	return new Schema({
 		appId: {type: 'string', required: true},
 		apiKey: {type: 'string', required: true},
+		path: {type: 'string', default: '/tmp/realm', help: 'Local Realm state storage path'},
 		responsesCollection: {type: 'string', required: false, default: 'mom_responses'},
 		metricsCollection: {type: 'string', required: false, default: 'mom_metrics'},
 	});
@@ -16,6 +17,7 @@ export function init({options, state}) {
 		.then(()=> new Realm.App({id: options.appId}))
 		.then(app => app.logIn(Realm.Credentials.anonymous()))
 		.then(()=> Realm.open({
+			path: options.path, // Local swap for Realm
 			schema: [
 				{
 					name: options.responsesCollection,
