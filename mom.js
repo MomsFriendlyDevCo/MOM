@@ -1,6 +1,7 @@
 #!/usr/bin/node
 import {dirName, importAll} from '@momsfriendlydevco/es6';
 import {program} from 'commander';
+import 'commander-extras';
 global.__dirname = dirName();
 
 Promise.resolve()

@@ -1,13 +1,15 @@
 import {Command} from 'commander';
 import {execa} from 'execa';
 import fs from 'node:fs/promises';
+import {metaArgs} from '#lib/config';
 
 export function command() {
 	return new Command()
 		.name('pm2-install')
 		.description('Install MOM within PM2')
 		.option('--name <name>', 'PM2 process name', 'MOM')
-		.option('--env <path>', 'Specify alternate .env file to use for config, set `--env=none` to disable completely')
+		.option('-n, --dry-run', 'Don\'t actually action anything, just print the command that would be run')
+		.note('The current .env file is used unless --config <path> overrides it')
 		.action(commandRun)
 }
 
@@ -31,13 +33,21 @@ export function commandRun(opts) {
 			// }}}
 		]))
 		// Add to PM2 via exec {{{
-		.then(()=> execa('pm2', [
+		.then(()=> [
+			'pm2',
 			'start',
 			`--name=${opts.name}`,
 			`${__dirname}/mom.js`,
 			'--',
 			'run',
 			'--loop=0',
-			`--env=${opts.env}`,
-		]))
+			...(metaArgs.config
+				? [`--env=${metaArgs.config}`]
+				: []
+			),
+		])
+		.then(cmd => opts.dryRun
+			? console.log('(DRY-RUN)_Would run:', cmd.join(' '))
+			: execa(cmd, {all: 'inherit'})
+		)
 }
