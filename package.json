@@ -48,11 +48,11 @@
   "dependencies": {
     "@honeycombio/opentelemetry-node": "^0.3.0",
     "@momsfriendlydevco/cache": "^2.1.5",
-    "@momsfriendlydevco/dotenv": "file:../dotenv",
+    "@momsfriendlydevco/dotenv": "^1.2.5",
     "@momsfriendlydevco/es6": "^1.2.0",
     "@momsfriendlydevco/eval": "^1.0.0",
     "@momsfriendlydevco/eventer": "^1.6.1",
-    "@momsfriendlydevco/formatters": "file:../formatters",
+    "@momsfriendlydevco/formatters": "^1.2.2",
     "@opentelemetry/auto-instrumentations-node": "^0.36.0",
     "@opentelemetry/sdk-metrics": "^1.8.0",
     "axios": "^1.2.2",
