@@ -1,3 +1,4 @@
+import {format} from '@momsfriendlydevco/formatters';
 import {styleMetric} from '#reporters/metrics';
 
 export function config({Schema}) {
@@ -73,10 +74,12 @@ export function run({options, responses}) {
 			+ '\n'.repeat(options.moduleSpacingAfter)
 		),
 		success.length > 0 ? '' : false,
-		fails.length == 0 && success.length > 1 ? `All ${success.length} tests passing`
-			: fails.length > 0 && success.length > 0 ? `${fails.length} tests failing, ${success.length} succeeding out of ${responses.length} ~ ${Math.round((success.length / responses.length) * 100)}%`
-			: fails.length > 1 ? `All ${fails.length} tests failing`
-			: false,
+		format(
+			fails.length == 0 && success.length > 1 ? `All [style cyan]${success.length}[/style] test[s] passing`
+				: fails.length > 0 && success.length > 0 ? `[style cyan]${fails.length}[/style] test[s] failing, [style cyan]${success.length}[/style] succeeding out of [style cyan]${responses.length}[/style] ~ [style cyan]${(success.length / responses.length) * 100}[%][/style]`
+				: fails.length > 1 ? `All ${fails.length} test[s] failing`
+				: '',
+		),
 		...options.footer,
 	]
 		.filter(v => v === undefined || v !== false)
