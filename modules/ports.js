@@ -10,12 +10,18 @@ import {Socket} from 'node:net';
 */
 export let protocols = {
 	any: { // Always pass as long as the socket was accepted
+		ports: [],
 		validate: ()=> true,
 	},
 	http: {
 		ports: [80, 8080],
 		write: 'GET /\n\n',
 		validate: data => /^HTTP\/1.1/.test(data),
+	},
+	https: {
+		ports: [443],
+		write: 'GET /\n\n',
+		validate: data => /The plain HTTP request was sent to HTTPS port/.test(data),
 	},
 	ssh: {
 		ports: [22],
@@ -27,7 +33,7 @@ export let protocols = {
 
 export function config({Schema}) {
 	return new Schema({
-		ports: {type: 'keyvals', required: true, default: '22:ssh', min: 1, noValue: 'any', help: 'CSV of `port: service` to scan, omitting the service assumes "any"'},
+		ports: {type: 'keyvals', required: true, default: '22:ssh', min: 1, noValue: true, help: 'CSV of `port: service`, `port(numeric)` or `service` to scan, omitting the service assumes "any"'},
 		host: {type: 'string', default: 'localhost'},
 		timeout: {type: 'duration', required: true, default: '3s'},
 		failStatus: {type: String, required: true, default: 'CRIT', help: 'How to treat failed ports'},
@@ -36,12 +42,44 @@ export function config({Schema}) {
 	});
 }
 
-export function run({options, mom}) {
-	let invalidProtocols = Object.values(options.ports).filter(protocol => !protocols[protocol]);
-	if (invalidProtocols.length > 0) throw new Error(format(`Invalid protocol[s]: [list]${invalidProtocols}[/list]`));
+export function init({options, state}) {
+	state.ports = Object.entries(options.ports) // Tidy up port parsing so each becomes an array `{port: Number, protocol: String}`
+		.map(([key, val]) => {
+			let port, protocol;
 
-	return Promise.all(Object.entries(options.ports)
-		.map(([port, protocol]) => {
+			if (isFinite(key) && typeof val == 'string') { // Form: Port:Number => Protocol:String
+				let matchingProtocol = Object.entries(protocols) // Find first protocol from our dictionary that has that port
+					.find(([, protocol]) =>
+						protocol.ports.some(pt => pt == key)
+				)?.[0]; // Either return the protocolId or undefined
+
+				if (!matchingProtocol) throw new Error(`Cannot find suitable protocol for the string "${key}"`);
+
+				[port, protocol] = [
+					key,
+					matchingProtocol,
+				];
+			} else if (isFinite(key)) { // Form: Port:Number, assume 'any'
+				[port, protocol] = [+key, 'any'];
+			} else if (typeof key == 'string' && val === true && protocols[key]) { // Form: Protocol:String
+				[port, protocol] = [protocols[key].ports[0], key]; // Use first port found for protocol
+			} else {
+				throw new Error(`Unable to identify port or protocol from keyval ${key}=${val}`);
+			}
+
+			return {port, protocol};
+		})
+		.sort((a, b) => a.port == b.port ? 0
+			: a.port > b.port ? -1
+			: 1
+		)
+
+	if (state.ports.length == 0) throw new Error('No ports specified to scan');
+}
+
+export function run({options, mom, state}) {
+	return Promise.all(state.ports
+		.map(({port, protocol}) => {
 			let socket;
 			let startWriteDate = Date.now();
 			return Promise.resolve()
