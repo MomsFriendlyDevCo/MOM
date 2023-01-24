@@ -4,6 +4,9 @@ import safeEval from '@momsfriendlydevco/eval';
 export function config({Schema}) {
 	return new Schema({
 		uri: {type: 'uri', required: true, parse: true},
+		sslCa: {type: 'file', buffer: true, required: false, help: 'Path to an SSL-CA.pem file to use as the root cert'},
+		sslCert: {type: 'file', buffer: true, required: false, help: 'Path to an SSL-CERT.pem file to use as the client cert'},
+		sslPassphrase: {type: 'string', required: false, default: ''},
 		tables: {type: 'keyvals', required: true, min: 1},
 	});
 }
@@ -23,6 +26,11 @@ export function init({options, state, mom}) {
 			user: options.uri.username,
 			password: options.uri.password,
 			database: options.uri.pathname.replace(/^\//, ''),
+			ssl: {
+				ca: options.sslCa,
+				cert: options.sslCert,
+				passphrase: options.sslPassphrase,
+			},
 		},
 	};
 	mom.debug('MySQL Connect with', config);
