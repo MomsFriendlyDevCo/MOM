@@ -43,6 +43,7 @@ export function run({options, state}) {
 	return Promise.all(
 		Object.entries(options.tables).map(([table, colEval]) => Promise.resolve()
 			.then(()=> state.connection(table).count())
+			.then(count => Object.values(count[0]).at(0)) // Unwrap all weird MySQL nonsense
 			.then(count => ({
 				count,
 				startTime: Date.now(),
@@ -50,28 +51,24 @@ export function run({options, state}) {
 					count,
 				}),
 			}))
-			.then(({rawCount, startTime, result}) => {
-				let count = parseInt(Object.values(rawCount).at(0));
-
-				return [
-					{
-						result,
-						metric: {
-							id: `${table}.count`,
-							value: count,
-							description: `Check ${table} table row count`,
-						},
+			.then(({count, startTime, result}) => [
+				{
+					result,
+					metric: {
+						id: `${table}.count`,
+						value: count,
+						description: `Check ${table} table row count`,
 					},
-					{
-						metric: {
-							id: `${table}.countTime`,
-							unit: 'timeMs',
-							value: Date.now() - startTime,
-							description: `Time to run ${table} table row count`,
-						},
+				},
+				{
+					metric: {
+						id: `${table}.countTime`,
+						unit: 'timeMs',
+						value: Date.now() - startTime,
+						description: `Time to run ${table} table row count`,
 					},
-				]
-			})
+				},
+			])
 		)
 	)
 		.then(stats => stats.flat())
