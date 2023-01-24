@@ -62,7 +62,6 @@ export function run({options}) {
 				description: `Disk usage at ${options.mountAlias || data.mount}`,
 				metric: {
 					id: 'spaceAvailable',
-					type: 'numeric',
 					unit: 'bytes',
 					value: data.used,
 					valueMax: data.size,

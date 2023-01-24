@@ -31,7 +31,6 @@ export function run({options}) {
 				: `File count with glob "${options.glob}"`,
 			metric: {
 				id: 'fileCount',
-				type: 'numeric',
 				value: results.length,
 				warnValue: `<${options.warnNumber}`,
 				critValue: `<${options.critNumber}`,
