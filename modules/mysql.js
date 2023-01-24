@@ -30,6 +30,7 @@ export function init({options, state, mom}) {
 				ca: options.sslCa,
 				cert: options.sslCert,
 				passphrase: options.sslPassphrase,
+				rejectUnauthorized: false,
 			},
 		},
 	};
