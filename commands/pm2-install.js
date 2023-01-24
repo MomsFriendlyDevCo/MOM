@@ -7,7 +7,7 @@ export function command() {
 	return new Command()
 		.name('pm2-install')
 		.description('Install MOM within PM2')
-		.option('--name <name>', 'PM2 process name', 'MOM')
+		.option('--name <name>', 'PM2 process name', 'mom')
 		.option('-n, --dry-run', 'Don\'t actually action anything, just print the command that would be run')
 		.note('The current .env file is used unless --config <path> overrides it')
 		.action(commandRun)
@@ -42,7 +42,7 @@ export function commandRun(opts) {
 			'run',
 			'--loop=0',
 			...(metaArgs.config
-				? [`--env=${metaArgs.config}`]
+				? [`--config=${metaArgs.config}`]
 				: []
 			),
 		])
