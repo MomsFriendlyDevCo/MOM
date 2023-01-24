@@ -27,6 +27,7 @@ export function init({options, state}) {
 					status: {type: String, required: true, enum: MOMResponseMetric.statuses.map(s => s.id)},
 					date: {type: Date, required: true},
 					message: {type: String},
+					tags: {type: 'string{}'},
 				}));
 			}
 

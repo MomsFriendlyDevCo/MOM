@@ -28,6 +28,7 @@ export function init({options, state}) {
 						status: 'string',
 						date: 'date',
 						message: 'string?',
+						tags: 'dictionary?',
 					},
 				},
 				{

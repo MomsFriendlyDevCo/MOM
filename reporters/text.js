@@ -10,6 +10,11 @@ export function config({Schema}) {
 		styleSummaryPass: {type: 'style', default: 'bold fgBlack bgGreen'},
 		styleSummaryFail: {type: 'style', default: 'bold fgWhite bgRed'},
 		styleModule: {type: 'style', default: 'fgBlack bgWhite'},
+		tags: {type: 'boolean', default: true},
+		styleModuleTagSurround: {type: 'style', default: 'gray'},
+		styleModuleTagKey: {type: 'style', default: 'dim'},
+		styleModuleTagSep: {type: 'style', default: 'gray'},
+		styleModuleTagVal: {type: 'style', default: 'dim'},
 		styleStatusPass: {type: 'style', default: 'fgBlack bgGreen'},
 		styleStatusWarn: {type: 'style', default: 'bold fgBlack bgYellow'},
 		styleStatusCrit: {type: 'style', default: 'bold fgWhite bgRed'},
@@ -39,6 +44,19 @@ export function run({options, responses}) {
 			.join('\n')
 	};
 
+	let formatTags = module => {
+		if (!options.tags || !module.tags) return ''; // Tags disabled or no tags to output anyway
+		return ' ' + Object.entries(module.tags)
+			.map(([key, val]) =>
+				options.styleModuleTagSurround('[')
+				+ options.styleModuleTagKey(key)
+				+ options.styleModuleTagSep(':')
+				+ options.styleModuleTagVal(val)
+				+ options.styleModuleTagSurround(']')
+			)
+			.sort()
+	};
+
 	let {fails, success} = responses.reduce((t, v) => {
 		if (['CRIT', 'ERROR'].includes(v.status)) {
 			t.fails.push(v);
@@ -57,6 +75,7 @@ export function run({options, responses}) {
 		...fails.map(m =>
 			'\n'.repeat(options.moduleSpacingBefore)
 			+ `${formatStatus(m.status)}: ${options.styleModule(m.id)}: ${m.message}`
+			+ formatTags(m)
 			+ formatMetrics(m)
 			+ '\n'.repeat(options.moduleSpacingAfter)
 		),
@@ -70,6 +89,7 @@ export function run({options, responses}) {
 		...success.map(m =>
 			'\n'.repeat(options.moduleSpacingBefore)
 			+ `${formatStatus(m.status)}: ${options.styleModule(m.id)}: ${m.message}`
+			+ formatTags(m)
 			+ formatMetrics(m)
 			+ '\n'.repeat(options.moduleSpacingAfter)
 		),
