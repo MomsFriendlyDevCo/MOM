@@ -196,9 +196,6 @@ Object lookup of status text (e.g. 'CRIT') to the status entry within `statusUti
 ### MOMResponseMetric.maxStatus(arr)
 Find the most critical status in an array of status strings.
 
-### MOMResponseMetric.metricValueMatches(value, expression)
-FIXME: Redundent?
-
 ### MOMResponseMetric.statusFromMetric(metric)
 Return the status ID (e.g. `"PASS"`) from the metric by examining its criteria.
 
