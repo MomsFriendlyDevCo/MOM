@@ -18,6 +18,7 @@ export function init({options, state}) {
 		.then(app => app.logIn(Realm.Credentials.anonymous()))
 		.then(()=> Realm.open({
 			path: options.path, // Local swap for Realm
+			deleteRealmIfMigrationNeeded: true,
 			schema: [
 				{
 					name: options.responsesCollection,
@@ -28,7 +29,7 @@ export function init({options, state}) {
 						status: 'string',
 						date: 'date',
 						message: 'string?',
-						tags: 'dictionary?',
+						tags: 'string{}',
 					},
 				},
 				{
