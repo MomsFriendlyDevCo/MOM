@@ -46,7 +46,7 @@ export function run() {
 			{
 				id: `${proc.name}.restarts`,
 				unit: 'number',
-				value: proc.monit.restart_time,
+				value: proc.pm2_env.restart_time,
 				description: `Process restarts of "${proc.name}"`,
 			},
 		]))
