@@ -58,6 +58,7 @@ export function convertResponseToMongoDoc(response) {
 		status: response.status,
 		date: response.date,
 		message: response.message,
+		tags: response.tags,
 	};
 }
 
