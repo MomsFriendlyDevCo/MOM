@@ -48,6 +48,6 @@ export function commandRun(opts) {
 		])
 		.then(cmd => opts.dryRun
 			? console.log('(DRY-RUN)_Would run:', cmd.join(' '))
-			: execa(cmd, {all: 'inherit'})
+			: execa(cmd[0], cmd.slice(1), {all: 'inherit'})
 		)
 }
