@@ -66,5 +66,5 @@ export function run({options, responses, state}) {
 			})
 			return wroteCount;
 		}))
-		.then(wroteCount => format(`Createad [style cyan]${wroteCount}[n][/style] item[s] in Realm`))
+		.then(wroteCount => format(`Created [style cyan]${wroteCount}[n][/style] item[s] in Realm`))
 }
