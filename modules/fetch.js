@@ -11,8 +11,8 @@ export function config({Schema}) {
 		warnMaxTime: {type: 'duration', default: '30s'},
 		critMaxTime: {type: 'duration', default: '1m'},
 		checkSsl: {type: Boolean, default: true},
-		warnSslRemaming: {type: 'duration', default: '14d'},
-		critSslRemaming: {type: 'duration', default: '3d'},
+		warnSslRemaining: {type: 'duration', default: '14d'},
+		critSslRemaining: {type: 'duration', default: '3d'},
 		keyword: {type: RegExp, acceptPlain: true, required: false},
 		keywordNegative: {type: RegExp, acceptPlain: true, required: false},
 	});
@@ -70,7 +70,7 @@ export function run({options}) {
 						id: 'responseTime',
 						unit: 'timeMs',
 						value: responseTime,
-						warnValue: `>=${options.critMaxTime}`,
+						warnValue: `>=${options.warnMaxTime}`,
 						critValue: `>=${options.critMaxTime}`,
 						description: 'Response time for web fetch',
 					},
@@ -79,8 +79,8 @@ export function run({options}) {
 							id: 'sslExpireTime',
 							unit: 'timeMs',
 							value: sslRemaining,
-							warnValue: `>=${options.warnSslRemaming}`,
-							critValue: `>=${options.critSslRemaming}`,
+							warnValue: `>=${options.warnSslRemaining}`,
+							critValue: `>=${options.critSslRemaining}`,
 							description: 'Amount of time the SSL has to expiry',
 						}]
 						: []
