@@ -36,6 +36,7 @@ export function command() {
 		.option('-p, --loop-pause [timestring]', 'Wait for a timestring-compatible delay between each loop. Use "0" to disable', '10s')
 		.option('-v, --verbose', 'Be more verbose')
 		.option('--no-headers', 'Disable header seperators if multiple reporters return content')
+		.note('Use of `--module` / `--reporter` does not prevent default options from being loaded, use `--config=disable` to prevent any config other than that specified')
 		.action(commandRun)
 }
 
