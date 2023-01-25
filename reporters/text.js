@@ -55,6 +55,7 @@ export function run({options, responses}) {
 				+ options.styleModuleTagSurround(']')
 			)
 			.sort()
+			.join(' ')
 	};
 
 	let {fails, success} = responses.reduce((t, v) => {
